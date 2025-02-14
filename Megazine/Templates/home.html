@@ -196,15 +196,19 @@
   transform: skew(-16deg);
   transition: background-color 0.3s ease;        
 } 
-
+.box:hover {
+    background: blue;
+  }
+  
+  /* selected link */
+  .box:active {
+    color: blue;
+  }
 span1{
 display: inline-block;
 opacity: 0;
 transform: translateX(10px);
             animation: right-slideArrows 1s infinite linear;
-}
-box:focus {     
-    background-color:rgb(54, 157, 226);    
 }
  
 </style>
