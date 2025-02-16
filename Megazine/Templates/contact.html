@@ -1,11 +1,113 @@
+{% load static %} 
+
+<style>
+    body{
+        color:white;
+        background-color: black;
+    }
+    .container{
+        display: flex;
+        justify-content: space-around;
+    }
+    h1{
+        color: gold;
+    }
+    b1{
+        color: gold;  
+    }
+    .about-us{
+        
+    
+    margin-top: 200px; 
+    
+    }
+    .fa-facebook {
+  background: #3B5998;
+  color: white;
+  
+}
+.fa-youtube {
+  background: #bb0000;
+  color: white;
+}
+
+.fa-instagram {
+  background: #125688;
+  color: white;
+}
+
+</style>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    
+    <div class="container">
+    <div class="contact">
+        <h1>UAE Office</h1>
+        <p><b>Livingstone Institute of Future Technologies</b></p>
+        <p>C/O Johnnette Middle East Project Management
+          E202,  Block C, Saha Building, Near Burj Khalifa, Downtown, Dubai</p>
+          <p><b1>Mob</b1>: +971 556840070 <b1>Email</b1>: itab@johnnette.com</p>
+          <h1>Kazakhstan Office</h1>
+          <p><b>Livingstone Institute of Future Technologies</b></p>
+          <p>C/O Nortel Engineering Kazakhstan
+           ​010000, г. Нур-Султан, ул. Сыганак 29БЦ "Евроцентр",11 этаж 1126, 1123 офис</p>
+         <p><b1>Mob</b1>: +7 7474853880 <b1>Email</b1>: assel.jimova22@gmail.com</p>
+         <h1>India Office</h1>
+         <p><b>Livingstone Institute of Future Technologies</b></p>
+         <p>A-38, Sector 67, Noida 201301 </p>
+         <p><b1>Mob</b1>: +919205625360 <b1> Email</b1>: Contact@livingstoneinstitute.com</p>
+    </div>
+    <div class="about-us">
+        <p>About Us</p>
+
+Johnnette Group
+
+How Pitching Works
+
+Portfolio
+
+Faculty
+
+Upcoming Events
+
+Testimonials
+
+Workshop
+
+Investors
+
+FT Magazine
+<br>
+<br>
+<br>
+<br><br><br><br><br><br><br><br><br><br><br>
+
+<a href="#" class="fa fa-facebook"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#" class="fa fa-youtube"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#" class="fa fa-instagram"></a>
+<br><br><br><br><br>
+<p>2025 Livingstone Institute of Future Technologies </p> 
+    </div>
+    <div class="certificate">
+        <h2><b>CERTIFICATE IN INTELLIGENT  ENTREPRENEURSHIP</b></h2>
+        <p><b1>Other Programs</b1> </p>
+        <p>CERTIFIED STARTUP ANALYST</p>
+        <p>STARTUP CRISIS MANAGEMENT</p>
+        <p>WHY TO INVEST IN WOMEN RUN STARTUPS</p>
+        <br><br><br>
+        <img src="{% static '/img/new_logo_enhanced.avif' %}" style="border-radius: 10px;" alt="ad Thumbnail">
+         
+    </div>
+</div>
 </body>
 </html>
