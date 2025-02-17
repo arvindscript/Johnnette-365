@@ -1,113 +1,142 @@
-{% load static %} 
 
-<style>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact Us{% endblock title %}
+
+{% block page_css %}
+<style>   
+    html{
+        background: black;
+        /* box-sizing:border-box; */
+    }
+    *{
+    /* box-sizing:inherit; */
+    }
     body{
-        color:white;
-        background-color: black;
+    background: white;
+    width:100%;
+    /* max-width: 1100px; */
+    margin:50% ;
+    /* font-family: Calibri, Arial, sans-serif; */
+    form {
+       
+        margin:30px; 
+        padding:20px;
     }
-    .container{
-        display: flex;
-        justify-content: space-around;
-    }
-    h1{
-        color: gold;
-    }
-    b1{
-        color: gold;  
-    }
-    .about-us{
-        
-    
-    margin-top: 200px; 
-    
-    }
-    .fa-facebook {
-  background: #3B5998;
-  color: white;
-  
-}
-.fa-youtube {
-  background: #bb0000;
-  color: white;
-}
 
-.fa-instagram {
-  background: #125688;
-  color: white;
-}
 
+    }
+    h1, p{
+    text-align: center;
+    }
+    label{
+    display:block;
+    margin:1em 0 .2em;
+    }
+    /* single-line text, checkbox, and button */
+    input, select, textarea{
+    display:block;
+    width:100%;
+    padding:.3em;
+    font-size:20px;
+    background-color:#fbfbfb;
+    border:solid 1px #CCC;
+    resize:vertical;
+    }
+    textarea{
+    min-height:180px;
+    }
+    select{
+    color:indigo;
+    }
+    option{
+    color:blue;
+    background: lavenderBlush;
+    }
+    input[type=checkbox]{
+    display:inline;
+    width:auto;
+    color:red;
+    }
+
+    input[type=submit]{
+    background:lightcoral;
+    margin:1em 0 0;
+    color:white;
+    border:none;
+    border-radius:8px;
+    transition:all .3s ease-out;
+    }
+
+    input:focus,
+    input:hover,
+    select:focus,
+    select:hover,
+    textarea:focus,
+    textarea:hover{
+    background: lavenderBlush;
+    }
+
+    /* hover and focus states 
+    input[type=submit]:hover,
+    input[type=submit]:focus{
+    background: lightgreen;
+    outline:none;
+    }
+
+    @media screen and (min-width:600px) {
+    /*  make the form 2 columns */
+    form:after{
+        content:'';
+        display:block;
+        clear:both;
+    }
+    .column{
+        width:50%;
+        padding:1em;
+        float:left;
+    }
 </style>
+{% endblock page_css %}
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-<body>
-    <div class="container">
-    <div class="contact">
-        <h1>UAE Office</h1>
-        <p><b>Livingstone Institute of Future Technologies</b></p>
-        <p>C/O Johnnette Middle East Project Management
-          E202,  Block C, Saha Building, Near Burj Khalifa, Downtown, Dubai</p>
-          <p><b1>Mob</b1>: +971 556840070 <b1>Email</b1>: itab@johnnette.com</p>
-          <h1>Kazakhstan Office</h1>
-          <p><b>Livingstone Institute of Future Technologies</b></p>
-          <p>C/O Nortel Engineering Kazakhstan
-           ​010000, г. Нур-Султан, ул. Сыганак 29БЦ "Евроцентр",11 этаж 1126, 1123 офис</p>
-         <p><b1>Mob</b1>: +7 7474853880 <b1>Email</b1>: assel.jimova22@gmail.com</p>
-         <h1>India Office</h1>
-         <p><b>Livingstone Institute of Future Technologies</b></p>
-         <p>A-38, Sector 67, Noida 201301 </p>
-         <p><b1>Mob</b1>: +919205625360 <b1> Email</b1>: Contact@livingstoneinstitute.com</p>
-    </div>
-    <div class="about-us">
-        <p>About Us</p>
 
-Johnnette Group
 
-How Pitching Works
+{% block content %}
+    <form action="#" method="post">
+        <h1><u>Contact-Us</u></h1>
+        <p>Please take a moment to get in touch, we will get back to you shortly.</p>
+      
+        <div class="column">
+          <label for="the-name">Your Name</label>
+          <input type="text" name="name" id="the-name">
+      
+          <label for="the-email">Email Address</label>
+          <input type="email" name="email" id="the-email">
+      
+          <label for="the-phone">Phone Number</label>
+          <input type="tel" name="phone" id="the-phone">
+      
+          <label for="the-reason">How can we help you?</label>
+          <select name="reason" id="the-reason">
+          <option value="">Choose one</option>
+          <option value="web">I need your magazine</option>
+          <option value="video">I like your Magazine</option>
+          <option value="3d">Update Magazine </option>
+        </select>
+        </div>
+        <div class="column">
+          <label for="the-message">Message</label>
+          <textarea name="message" id="the-message"></textarea>
+          <label>
+          <input type="checkbox" name="newsletter" value="yes"> Join our mailing list?
+          </label>
+          <input type="submit" value="Send Message">
+        </div>
+    </form>
+{% endblock content %}
 
-Portfolio
 
-Faculty
 
-Upcoming Events
-
-Testimonials
-
-Workshop
-
-Investors
-
-FT Magazine
-<br>
-<br>
-<br>
-<br><br><br><br><br><br><br><br><br><br><br>
-
-<a href="#" class="fa fa-facebook"></a>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="#" class="fa fa-youtube"></a>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="#" class="fa fa-instagram"></a>
-<br><br><br><br><br>
-<p>2025 Livingstone Institute of Future Technologies </p> 
-    </div>
-    <div class="certificate">
-        <h2><b>CERTIFICATE IN INTELLIGENT  ENTREPRENEURSHIP</b></h2>
-        <p><b1>Other Programs</b1> </p>
-        <p>CERTIFIED STARTUP ANALYST</p>
-        <p>STARTUP CRISIS MANAGEMENT</p>
-        <p>WHY TO INVEST IN WOMEN RUN STARTUPS</p>
-        <br><br><br>
-        <img src="{% static '/img/new_logo_enhanced.avif' %}" style="border-radius: 10px;" alt="ad Thumbnail">
-         
-    </div>
-</div>
-</body>
-</html>
+{% block page_js %}
+{% endblock page_js %}
