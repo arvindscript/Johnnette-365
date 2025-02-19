@@ -1,0 +1,740 @@
+/**
+ * All Events of Indian Express
+ *
+ * @package indian-express
+ */
+
+function mo_getCookie( c_name ) {
+	var i,x,y,ARRcookies = document.cookie.split( ';' );
+	var arr_length       = ARRcookies.length;
+	for ( i = 0; i < arr_length; i++ ) {
+		x = ARRcookies[i].substr( 0,ARRcookies[i].indexOf( '=' ) );
+		y = ARRcookies[i].substr( ARRcookies[i].indexOf( '=' ) + 1 );
+		x = x.replace( /^\s+|\s+$/g,"" );
+		if ( x === c_name ) {
+			return unescape( y );
+		}
+	}
+}
+function mo_setCookie( cname, cvalue, exdays ) {
+	var d = new Date();
+	d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
+	var expires     = 'expires=' + d.toUTCString();
+	document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/';
+}
+
+function mo_destroyCookie(name) {
+	document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+
+function logged_out_for_all_events() {
+	// Moengage Events.
+	if (
+		'' !== mo_getCookie( 'ev_user_state' )
+		&& 'guest' !== mo_getCookie( 'ev_user_state' )
+		&& 'undefined' !== typeof Moengage
+		&& null !== Moengage
+		&& '' !== Moengage
+	) {
+		Moengage.track_event( 'user_logged_out' );
+		Moengage.destroy_session();
+		mo_destroyCookie( 'mo_login_event' );
+		mo_destroyCookie( 'user_subscription_details' );
+		mo_destroyCookie( 'moe_registration_event_fired' );
+		mo_destroyCookie( 'moe_registration_event_started' );
+		mo_destroyCookie( 'moe_registration_event_ended' );
+	}
+}
+
+function call_register_event_started() {
+	if ( 'guest' === mo_getCookie( 'ev_user_state' ) ) {
+		mo_destroyCookie( 'moe_registration_event_fired' );
+		mo_destroyCookie( 'moe_registration_event_started' );
+		mo_destroyCookie( 'moe_registration_event_ended' );
+		mo_setCookie( 'moe_registration_event_started', '1', 30 );
+	}
+}
+
+function call_register_event_ended() {
+	var event_started = mo_getCookie( 'moe_registration_event_started' );
+	var event_ended   = mo_getCookie( 'moe_registration_event_ended' );
+	var event_fired   = mo_getCookie( 'moe_registration_event_fired' );
+
+	if (
+		'1' === event_started
+		&& '1' !== event_ended
+		&& '1' !== event_fired
+	) {
+		mo_setCookie( 'moe_registration_event_ended', '1', 30 );
+	}
+}
+
+function call_register_event_fired() {
+	var event_started = mo_getCookie( 'moe_registration_event_started' );
+	var event_ended   = mo_getCookie( 'moe_registration_event_ended' );
+	var event_fired   = mo_getCookie( 'moe_registration_event_fired' );
+	if (
+		'' !== mo_getCookie( 'ev_user_state' )
+		&& 'guest' !== mo_getCookie( 'ev_user_state' )
+		&& '1' === event_started
+		&& '1' === event_ended
+		&& '1' !== event_fired
+		&& 'undefined' !== typeof Moengage
+		&& null !== Moengage
+		&& '' !== Moengage
+	) {
+		Moengage.track_event(
+			'user_registered',
+			{
+				'register_source':'IE'
+			}
+		);
+		moenegage_track_user();
+		mo_setCookie( 'moe_registration_event_fired', '1', 30 );
+	}
+}
+
+
+/*
+* Event for user activity - Login
+*/
+function call_user_events() {
+	if ( 'guest' === mo_getCookie( 'ev_user_state' ) ) {
+		mo_destroyCookie( 'mo_login_event' );
+	}
+	if (
+		'' !== mo_getCookie( 'ev_user_state' )
+		&& 'guest' !== mo_getCookie( 'ev_user_state' )
+		&& '1' !== mo_getCookie( 'moe_registration_event_started' )
+		&& '1' !== mo_getCookie( 'mo_login_event' )
+		&& 'undefined' !== typeof Moengage
+		&& null !== Moengage
+		&& '' !== Moengage
+	) {
+		Moengage.track_event(
+			'user_logged_in',
+			{
+				'login_source':'IE'
+			}
+		);
+		moenegage_track_user();
+		mo_setCookie( 'mo_login_event', '1', 30 );
+	}
+}
+
+/**
+ * Get SSO User Details
+ */
+function get_sso_userdata() {
+	var user_obj;
+	var user_info = {};
+
+	user_obj = mo_getCookie( 'oauth_user' );
+	if ( 'string' === typeof user_obj && '' !== user_obj ) {
+		user_info = jQuery.parseJSON( user_obj );
+	}
+	return user_info;
+}
+
+function moenegage_track_user() {
+	var user_info = get_sso_userdata();
+	if ( user_info ) {
+		var userName = '';
+		if ( user_info.user_email === user_info.user_name ) {
+			userName = user_info.user_first_name + ' ' + user_info.user_last_name;
+			userName = userName.trim();
+		} else {
+			userName = user_info.user_name;
+		}
+		if ( 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage ) {
+			Moengage.add_unique_user_id( user_info.refs_id );
+			Moengage.add_first_name( user_info.user_first_name );
+			Moengage.add_last_name( user_info.user_last_name );
+			Moengage.add_email( user_info.user_email );
+			Moengage.add_mobile( user_info.user_phone );
+			Moengage.add_user_name( userName );
+			Moengage.add_gender( user_info.user_gender );
+			Moengage.add_user_attribute( 'EV_GUID', user_info.user_ev_guid );
+		}
+	}
+}
+
+function get_evolok_user_details() {
+	var user_obj;
+	var user_info;
+	var evolok_user_state = '';
+	evolok_user_state     = mo_getCookie( 'ev_user_state' );
+	if ( 'undefined' !== typeof evolok_user_state && '' !== evolok_user_state && null !== evolok_user_state ) {
+		user_obj = mo_getCookie( 'oauth_user' );
+		if ( 'string' === typeof user_obj && '' !== user_obj ) {
+			user_info = jQuery.parseJSON( user_obj );
+			return user_info;
+		}
+	}
+}
+
+
+function user_information_edited( user_details ) {
+	if ( 'undefined' !== typeof user_details ) {
+		var user_info = get_evolok_user_details();
+		if ( 'undefined' !== typeof user_info ) {
+			var refs_id = user_info.refs_id;
+
+			if ( 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage ) {
+				Moengage.track_event(
+					'user_details_edited',
+					{
+						'user_refs_id': refs_id
+					}
+				);
+				Moengage.add_first_name( user_details.first_name );
+				Moengage.add_last_name( user_details.last_name );
+				Moengage.add_email( user_details.email_address );
+				Moengage.add_mobile( user_details.mobile_number );
+				Moengage.add_gender( user_details.gender );
+			}
+		}
+	}
+}
+
+function track_page_viewed( webpage_type, webpage_title ) {
+	if (
+		'undefined' !== typeof webpage_type
+		&& 'undefined' !== typeof webpage_title
+		&& 'undefined' !== typeof Moengage
+		&& null !== Moengage
+		&& '' !== Moengage
+	) {
+		Moengage.track_event(
+			'page_viewed',
+			{
+				'page_type': webpage_type,
+				'page_title': webpage_title
+			}
+		);
+	}
+}
+
+
+function track_article_viewed() {
+	if ( 'undefined' !== typeof custom_ev_data && 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage ) {
+		Moengage.track_event(
+			'article_page_viewed',
+			{
+				'article_category': custom_ev_data.category,
+				'article_type': custom_ev_data.article_type,
+				'article_headline': custom_ev_data.title,
+				'article_id': custom_ev_data.articleId,
+				'article_publish_date': custom_ev_data.publish_date,
+				'article_subcategory': custom_ev_data.section,
+				'article_tags': custom_ev_data.tags,
+				'author': custom_ev_data.authors,
+				'is_multimedia': custom_ev_data.is_multimedia,
+				'multimedia_tag': custom_ev_data.tags,
+				'article_url': location.href
+			}
+		);
+	}
+}
+
+
+function track_premium_article_viewed() {
+	if ( 'undefined' !== typeof custom_ev_data && 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage ) {
+		var evolok_user_state = 'Guest';
+		evolok_user_state     = mo_getCookie( 'ev_user_state' );
+
+		Moengage.track_event(
+			'premium_article_page_viewed',
+			{
+				'article_category': custom_ev_data.category,
+				'article_type': custom_ev_data.article_type,
+				'article_headline': custom_ev_data.title,
+				'article_id': custom_ev_data.articleId,
+				'article_publish_date': custom_ev_data.publish_date,
+				'article_update_date': custom_ev_data.update_date,
+				'article_subcategory': custom_ev_data.section,
+				'article_tags': custom_ev_data.tags,
+				'author': custom_ev_data.authors,
+				'is_multimedia': custom_ev_data.is_multimedia,
+				'multimedia_tag': custom_ev_data.tags,
+				'article_url': location.href,
+				'count_metering': custom_ev_data.count_metering,
+				'premium': custom_ev_data.premium,
+				'premium_paywall': custom_ev_data.premium_paywall,
+				'paid_after_date': custom_ev_data.paid_after_date,
+				'paid_after_date_ist': custom_ev_data.paid_after_date_ist,
+				'paid_till_date': custom_ev_data.paid_till_date,
+				'paid_till_date_ist': custom_ev_data.paid_till_date_ist,
+				'user_status': evolok_user_state
+			}
+		);
+	}
+}
+
+function create_user_subscription_details_cookie() {
+	var evolok_access_token = mo_getCookie( 'access_token' );
+
+	if ( '' !== evolok_access_token && 'undefined' !== typeof evolok_access_token && null !== evolok_access_token ) {
+		var subscriber_details = {};
+		let cookieExpireDays = 365;
+		var curr_url           = location.hostname;
+		var ecommerce_domain;
+		if ( 'indianexpress.com' === curr_url ) {
+			ecommerce_domain = 'ecommerce.indianexpress.com';
+		} else {
+			ecommerce_domain = 'staging-ecommerce.indianexpress.com';
+		}
+		var sendHeaders = {
+			'Authorization': 'Bearer ' + evolok_access_token,
+			'Content-Type': 'application/json',
+			'Accept': 'application/json',
+			'Access-Control-Allow-Headers': '*',
+			'Origin': 'https://' + curr_url + '/'
+		};
+		jQuery.ajax(
+			{
+				type: 'GET',
+				async: false,
+				crossDomain: true,
+				headers: sendHeaders,
+				url: 'https://' + ecommerce_domain + '/api/v2/ua/user/subscription/',
+				beforeSend: function () {
+					console.log( 'fetching data' );
+				},
+				success: function ( result ) {
+					console.log( 'data fetched' );
+					var dataResult = result;
+					if ( dataResult.hasOwnProperty( 'data' ) && dataResult.data.hasOwnProperty( 'subscription' ) ) {
+						var subscribtion_data = dataResult.data.subscription;
+
+						if ( subscribtion_data.hasOwnProperty( 'renewal' ) ) {
+							subscriber_details['status']          = ( subscribtion_data.renewal[0].hasOwnProperty( 'status' ) ) ? subscribtion_data.renewal[0].status : '';
+							subscriber_details['end_date']        = ( subscribtion_data.renewal[0].hasOwnProperty( 'end_date' ) ) ? subscribtion_data.renewal[0].end_date : '';
+							subscriber_details['start_date']      = ( subscribtion_data.renewal[0].hasOwnProperty( 'start_date' ) ) ? subscribtion_data.renewal[0].start_date : '';
+							subscriber_details['read_now_access'] = ( subscribtion_data.renewal[0].hasOwnProperty( 'read_now_access' ) ) ? subscribtion_data.renewal[0].read_now_access : '';
+						}
+
+						subscriber_details['multiedition']         = ( subscribtion_data.hasOwnProperty( 'multiedition' ) ) ? subscribtion_data.multiedition : '';
+						subscriber_details['digital_only']         = ( subscribtion_data.hasOwnProperty( 'digital_only' ) ) ? subscribtion_data.digital_only : '';
+						subscriber_details['is_epaper']            = ( subscribtion_data.hasOwnProperty( 'is_epaper' ) ) ? subscribtion_data.is_epaper : '';
+						subscriber_details['is_digital']           = ( subscribtion_data.hasOwnProperty( 'is_digital' ) ) ? subscribtion_data.is_digital : '';
+						subscriber_details['is_combo']             = ( subscribtion_data.hasOwnProperty( 'is_combo' ) ) ? subscribtion_data.is_combo : '';
+						subscriber_details['subscription_plan_id'] = ( subscribtion_data.hasOwnProperty( 'subscription_plan_id' ) ) ? subscribtion_data.subscription_plan_id : '';
+						subscriber_details['plan_edition_id']      = ( subscribtion_data.hasOwnProperty( 'plan_edition_id' ) ) ? subscribtion_data.plan_edition_id : '';
+						subscriber_details['epaper_id']            = ( subscribtion_data.hasOwnProperty( 'epaper_id' ) ) ? subscribtion_data.epaper_id : '';
+						subscriber_details['is_upsc']              = ( subscribtion_data.hasOwnProperty( 'is_upsc' ) ) ? subscribtion_data.is_upsc : false;
+
+						var issue_status = ( subscribtion_data.hasOwnProperty( 'issue_status' ) ) ? subscribtion_data.issue_status : '';
+						if ( 1 === parseInt( issue_status, 10 ) ) {
+							subscriber_details['issue_status'] = issue_status;
+							subscriber_details['issue_id']     = ( subscribtion_data.hasOwnProperty( 'issue_id' ) ) ? subscribtion_data.issue_id : '';
+							subscriber_details['issue_name']   = ( subscribtion_data.hasOwnProperty( 'issue_name' ) ) ? subscribtion_data.issue_name : '';
+							subscriber_details['issue_detail'] = ( subscribtion_data.hasOwnProperty( 'issue_detail' ) ) ? subscribtion_data.issue_detail : '';
+						}
+
+						if ( subscribtion_data.hasOwnProperty( 'end_date' ) && '' !== subscriber_details['end_date'] ) {
+							const date1 = new Date(); // today date.
+							const date2 = new Date(subscriber_details['end_date']);
+							const diffTime = Math.abs(date2 - date1);
+							const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+							cookieExpireDays = diffDays
+						}
+
+						subscriber_details['user_type'] = 'subscriber';
+						mo_setCookie( 'user_subscription_details', JSON.stringify( subscriber_details ), cookieExpireDays );
+					} else {
+						subscriber_details['user_type'] = 'registered';
+						mo_setCookie( 'user_subscription_details', JSON.stringify( subscriber_details ), cookieExpireDays );
+					}
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.log( 'Data not fetched' );
+					console.log( 'In error', jqXHR );
+				}
+			}
+		);
+	}
+	return false;
+}
+
+
+function track_user_subscription_status() {
+	var user_state = 'Guest';
+	user_state     = mo_getCookie( 'ev_user_state' );
+
+	if (
+		'undefined' !== typeof Moengage
+		&& null !== Moengage
+		&& '' !== Moengage
+		&& 'undefined' !== typeof user_state
+		&& 'Guest' !== user_state
+	) {
+		var user_id;
+		var user_email;
+		var user_info = get_evolok_user_details();
+		if ( 'undefined' !== typeof user_info ) {
+			user_id    = user_info.refs_id;
+			user_email = user_info.user_email;
+		} else {
+			return;
+		}
+
+		var sub_cookie;
+		sub_cookie = mo_getCookie( 'user_subscription_details' );
+		if ( 'undefined' === typeof sub_cookie || '' === sub_cookie ) {
+			sub_cookie = create_user_subscription_details_cookie();
+			sub_cookie = mo_getCookie( 'user_subscription_details' );
+		}
+		var subscriber_details = jQuery.parseJSON( sub_cookie );
+
+		if (
+			'undefined' !== typeof subscriber_details.status
+			&& '' !== subscriber_details.status
+		) {
+			let end_date        = ( 'undefined' !== typeof subscriber_details.end_date ) ? subscriber_details.end_date : '';
+			let start_date      = ( 'undefined' !== typeof subscriber_details.start_date ) ? subscriber_details.start_date : '';
+			let read_now_access = ( 'undefined' !== typeof subscriber_details.read_now_access ) ? subscriber_details.read_now_access : '';
+
+			let is_epaper  = ( 'undefined' !== typeof subscriber_details.is_epaper ) ? subscriber_details.is_epaper : '';
+			let is_digital = ( 'undefined' !== typeof subscriber_details.is_digital ) ? subscriber_details.is_digital : '';
+			let is_combo   = ( 'undefined' !== typeof subscriber_details.is_combo ) ? subscriber_details.is_combo : '';
+
+			Moengage.add_user_attribute( 'subscription_status', subscriber_details.status );
+			Moengage.add_user_attribute( 'subscription_start_date', start_date );
+			Moengage.add_user_attribute( 'subscription_end_date', end_date );
+
+			if ( is_epaper || is_combo ) {
+				let subscription_type = '';
+				if ( is_epaper ) {
+					subscription_type = 'epaper';
+				} else if ( is_combo ) {
+					subscription_type = 'combo';
+				}
+
+				let multiedition         = ( 'undefined' !== typeof subscriber_details.multiedition ) ? subscriber_details.multiedition : '';
+				let subscription_plan_id = ( 'undefined' !== typeof subscriber_details.subscription_plan_id ) ? subscriber_details.subscription_plan_id : '';
+				let plan_edition_id      = ( 'undefined' !== typeof subscriber_details.plan_edition_id ) ? subscriber_details.plan_edition_id : '';
+				let epaper_id            = ( 'undefined' !== typeof subscriber_details.epaper_id ) ? subscriber_details.epaper_id : '';
+				let issue_status         = ( 'undefined' !== typeof subscriber_details.issue_status ) ? subscriber_details.issue_status : '';
+				let issue_id             = ( 'undefined' !== typeof subscriber_details.issue_id ) ? subscriber_details.issue_id : '';
+				let issue_name           = ( 'undefined' !== typeof subscriber_details.issue_name ) ? subscriber_details.issue_name : '';
+				let issue_detail         = ( 'undefined' !== typeof subscriber_details.issue_detail ) ? subscriber_details.issue_detail : '';
+
+				Moengage.add_user_attribute( 'subscription_type', subscription_type );
+
+				Moengage.track_event(
+					'user_subscription_status',
+					{
+						'user_state'          : user_state,
+						'unique_user_id'      : user_id,
+						'user_email'          : user_email,
+						'subscription_status' : subscriber_details.status,
+						'start_date'          : start_date,
+						'end_date'            : end_date,
+						'read_now_access'     : read_now_access,
+						'subscription_type'   : subscription_type,
+						'multiedition'        : multiedition,
+						'subscription_plan_id': subscription_plan_id,
+						'plan_edition_id'     : plan_edition_id,
+						'epaper_id'           : epaper_id,
+						'issue_status'        : issue_status,
+						'issue_id'            : issue_id,
+						'issue_name'          : issue_name,
+						'issue_detail'        : issue_detail
+					}
+				);
+			} else if ( is_digital ) {
+				let digital_only = ( 'undefined' !== typeof subscriber_details.digital_only ) ? subscriber_details.digital_only : '';
+
+				Moengage.add_user_attribute( 'subscription_type', 'digital' );
+
+				Moengage.track_event(
+					'user_subscription_status',
+					{
+						'user_state'    : user_state,
+						'unique_user_id': user_id,
+						'user_email'    : user_email,
+						'subscription_status': subscriber_details.status,
+						'start_date': start_date,
+						'end_date': end_date,
+						'read_now_access': read_now_access,
+						'subscription_type': 'digital',
+						'digital_only': digital_only
+					}
+				);
+			}
+		} else {
+			Moengage.track_event(
+				'user_subscription_status',
+				{
+					'user_state'    : user_state,
+					'unique_user_id': user_id,
+					'user_email'    : user_email,
+					'subscription_status': 'Not Active Subscriber'
+				}
+			);
+		}
+	}
+}
+
+function track_user_subscription_selected() {
+	if ( 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage ) {
+		var plan_type  = '';
+		var user_id    = '';
+		var user_email = '';
+		var user_state = 'Guest';
+		user_state     = mo_getCookie( 'ev_user_state' );
+
+		if ( 'undefined' !== typeof user_state && 'Guest' !== user_state ) {
+			var user_info = get_evolok_user_details();
+			if ( 'undefined' !== typeof user_info ) {
+				user_id    = user_info.refs_id;
+				user_email = user_info.user_email;
+			}
+		}
+
+		let ev_group_name = jQuery( 'ev-engagement' ).attr( 'group-name' );
+		if ( ev_group_name !== null && ev_group_name !== 'undefined' ) {
+			if ( 'subscribe_allaccess' === ev_group_name ) {
+				plan_type = 'E-Paper + Digital';
+			} else if ( 'subscribe_epaper' === ev_group_name ) {
+				plan_type = 'E-Paper';
+			} else if ( 'subscribe_premium' === ev_group_name ) {
+				plan_type = 'Digital';
+			}
+		}
+		Moengage.track_event(
+			'subscription_plan_selected',
+			{
+				'user_status': user_state,
+				'unique_user_id': user_id,
+				'user_email': user_email,
+				'plan_selected': plan_type
+			}
+		);
+	}
+}
+
+function track_subscription_purchase_success( curr_rolename, cur_purchase_id ) {
+	if ( 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage ) {
+
+		Moengage.track_event(
+			'subscription_purchase_success',
+			{
+				'subscription_rolename': curr_rolename,
+				'subscription_purchase_id': cur_purchase_id,
+				'subscription_status': 'success'
+			}
+		);
+	}
+}
+
+
+function track_user_click_events ( trigger, action, page_name, page_section ) {
+	if ( 'undefined' !== typeof Moengage && null !== Moengage && '' !== Moengage && 'undefined' !== typeof trigger ) {
+
+		let event_name = trigger.toLowerCase().split( " " ).join( "_" ) + '_clicked';
+
+		let eventObject = {
+			'page_name'         : page_name,
+			'page_section'      : page_section,
+			'click_trigger_name': trigger,
+			'click_action'      : action,
+			'event_action'      : 'clicked'
+		};
+
+		let userDetails = mo_getCookie( 'ie_userdata' );
+		let userType    = mo_getCookie( 'ev_user_state' );
+		if ( 'undefined' !== typeof userDetails && 'undefined' !== typeof userType ) {
+			eventObject.user_type = userType;
+		}
+		console.log('moengageeventobject');
+		console.log(eventObject);
+		Moengage.track_event(
+			event_name,
+			eventObject
+		);
+	}
+}
+
+
+function getScrollPercent() {
+	var winHeight   = jQuery( window ).height();
+	var docHeight   = jQuery( document ).height();
+	var scrollTop   = jQuery( window ).scrollTop(); // NaN or zero at top.
+	var trackLength = docHeight - winHeight;
+	var pctScrolled = Math.floor( scrollTop / trackLength * 100 );
+	return pctScrolled;
+}
+
+function call_scrolldepth_event( checkdepth, percent ) {
+	if ( 1 === checkdepth && 1 === enable_events ) {
+		Moengage.track_event(
+			'page_scroll',
+			{
+				'scroll_depth': percent
+			}
+		);
+	}
+}
+
+/**
+ * This function fires moengage event when confirm and pay button is clicked.
+ *
+ * @param {string} lockIt If button should be locked or not.
+ * @param {array} handle Unique lock name.
+ * @param {object} message Validation Message.
+ *
+ */
+function ie_ev_set_moengage_confirm_pay_event( userType, planTypes, userDetails ) {
+	setTimeout( function() {
+		if (
+			'undefined' !== typeof Moengage &&
+			null !== Moengage &&
+			'' !== Moengage &&
+			'undefined' !== typeof userType &&
+			'undefined' !== typeof planTypes &&
+			( 0 < planTypes.length || 'registered' === userType || 'guest' === userType ) &&
+			'undefined' !== typeof userDetails
+			) {
+				jQuery( document ).on( 'click', '.ev-engagement .checkout-button-processing', function() {
+					console.log( 'Pay Button Clicked' );
+					Moengage.track_event(
+						'subscription_confirm_and_pay',
+						{
+							'user_status': userType,
+							'geolocation': userDetails.geo,
+							'platform': userDetails.channel,
+							'plan_selected': planTypes
+						}
+					);
+				} );
+		}
+	}, 5000 );
+}
+
+/**
+ * This function fires moengage event when crossword or puzzle game is loaded.
+ *
+ * @param {string} lockIt If button should be locked or not.
+ * @param {array} handle Unique lock name.
+ * @param {object} message Validation Message.
+ *
+ */
+ function ie_ev_set_moengage_games_event( userType, planTypes, userDetails ) {
+	setTimeout( function() {
+		if (
+			'undefined' !== typeof Moengage &&
+			null !== Moengage &&
+			'' !== Moengage &&
+			'undefined' !== typeof userType &&
+			'undefined' !== typeof planTypes &&
+			( 0 < planTypes.length || 'registered' === userType || 'guest' === userType ) &&
+			'undefined' !== typeof userDetails
+			) {
+				if ( 'undefined' !== typeof gameIframeLoaded && true === gameIframeLoaded ) {
+					console.log( 'Game Started' );
+					let eventAttributes = {
+						'user_status': userType,
+						'game_type': 'crossword',
+						'game_level': 'Not Applicable'
+					};
+					if (
+						'undefined' !== typeof custom_ev_data &&
+						'undefined' !== custom_ev_data.current_page_url_parts &&
+						'undefined' !== custom_ev_data.current_page_url_parts[1] &&
+						'puzzles-and-games' === custom_ev_data.current_page_url_parts[1] &&
+						'undefined' !== custom_ev_data.current_page_url_parts[2] &&
+						'' !== custom_ev_data.current_page_url_parts[2]
+						) {
+							if ( 'crosswords' !== custom_ev_data.current_page_url_parts[2] ) {
+								eventAttributes = {
+									'user_status': userType,
+									'game_type': 'sudoku',
+									'game_level': custom_ev_data.current_page_url_parts[2]
+								};
+							}
+					}
+					console.log('eventAttributesobject');
+					console.log(eventAttributes);
+					Moengage.track_event(
+						'crosswords_and_puzzles_event',
+						eventAttributes
+					);
+				}
+			}
+	}, 5000 );
+}
+
+/**
+ * Fire moengage event on single article page if utm source is facebook.
+ */
+function track_facebook_utm() {
+	if (
+		'undefined' !== typeof Moengage &&
+		null !== Moengage &&
+		'' !== Moengage &&
+		'undefined' !== typeof moengage_settings &&
+		'undefined' !== typeof moengage_settings.facebook_event &&
+		'1' === moengage_settings.facebook_event
+		) {
+			let eventAttributes = {
+				'source': moengage_settings.device
+			};
+			Moengage.track_event(
+				'facebook',
+				eventAttributes
+			);
+		}
+}
+
+/**
+ * Initiate datepicker.
+ */
+function ieUpscSectionDatepicker() {
+	if ( 0 < jQuery( '#upsc_datepicker' ).length ) {
+		jQuery( document ).on( 'click', '.upsc_calender', function() {
+			jQuery('.calendar_toggle').toggle();
+		} );
+
+		let minDate = jQuery('.upsc_calender').attr('data-min');
+		let curDate = jQuery('.upsc_calender').attr('data-value');
+		jQuery("#upsc_datepicker").datepicker(
+			{
+				changeMonth: true,
+				defaultDate:curDate,
+				dateFormat:"yy-mm-dd",
+				changeYear: true, 
+				maxDate: "+0M 0D",
+				minDate: minDate,
+				onSelect: function(dateText, inst) {
+					let selectedDate = dateText;
+					let upscCalendarUrl = '';
+					if (
+						'undefined' !== typeof selectedDate
+						&& null !== selectedDate
+						&& '' !== selectedDate
+						&& 'undefined' !== typeof evolok_settings
+					) {
+						upscCalendarUrl = evolok_settings.extra_details.upsc_calendar_url;
+						selectedDate = selectedDate.replace(/-/g, "/");
+						upscCalendarUrl = upscCalendarUrl + selectedDate;
+						window.location.href = upscCalendarUrl; // @codingStandardsIgnoreLine
+					}
+				}
+			}
+		);
+	}
+}
+
+jQuery( document ).ready(function() {
+	ieUpscSectionDatepicker();
+	if ( jQuery('body').hasClass('single-article')) {
+		var $element = jQuery('.ie-first-publish');
+		var dataValue = $element.data('content');
+		if (dataValue) {
+			$element.text(dataValue);
+		}
+	}
+});

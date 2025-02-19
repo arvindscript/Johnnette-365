@@ -1,0 +1,456 @@
+/**
+ * Add MoEngage script on Indian Express header
+ *
+ * @package indian-express
+ */
+
+var moen_sdk_app_id = moengage_settings.moen_sdk_app_id;
+var debug_log       = parseInt( moengage_settings.debug_log, 10 );
+var serviceworkerjs = moengage_settings.serviceworker_js;
+var webpage_type    = moengage_settings.webpage_type;
+var webpage_title   = moengage_settings.webpage_title;
+var premium_art_chk = parseInt( moengage_settings.premium_art_chk, 10 );
+var enable_events   = parseInt( moengage_settings.enable_events, 10 );
+var payment_page    = parseInt( moengage_settings.payment_page, 10 );
+var progress_bar    = parseInt( moengage_settings.progress_bar, 10 );
+var device          = moengage_settings.device;
+var ieAnonymousMoengageEventFired = false;
+
+Moengage = moe(
+	{
+		app_id: moen_sdk_app_id,
+		debug_logs: debug_log,
+		cluster: 'DC_3',
+		swPath: serviceworkerjs,
+		assist: true
+	}
+);
+
+
+jQuery( window ).load(
+	function() {
+		if ( 1 === enable_events ) {
+			if ( 'function' === typeof call_user_events ) {
+				call_user_events();
+			}
+
+			if ( 1 === payment_page || 'registration' === webpage_title.toLowerCase() ) {
+				if ( 'function' === typeof call_register_event_started ) {
+					call_register_event_started();
+				}
+			}
+
+			if ( 'Payment Success Page' === webpage_type || 'User Account Page' === webpage_type ) {
+				if ( 'function' === typeof call_register_event_ended ) {
+					call_register_event_ended();
+				}
+			}
+
+			if ( 'function' === typeof call_register_event_fired ) {
+				call_register_event_fired();
+			}
+
+			try {
+				track_user_subscription_status();
+			} catch ( err ) {
+				console.log( 'Subscription Status Error = ', err );
+			}
+
+			if ( 'Article Page' === webpage_type && 'undefined' !== typeof premium_art_chk && null !== premium_art_chk ) {
+				if ( 1 === premium_art_chk ) {
+					try {
+						track_premium_article_viewed();
+					} catch ( err ) {
+						console.log( 'premium track Error = ', err );
+					}
+				} else if ( 0 === premium_art_chk ) {
+					try {
+						track_article_viewed();
+					} catch ( err ) {
+						console.log( 'article track Error = ', err );
+					}
+				}
+			} else {
+				try {
+					track_page_viewed( webpage_type, webpage_title );
+				} catch ( err ) {
+					console.log( 'Not able to track page view= ', err );
+				}
+			}
+
+			if ( 1 === payment_page ) {
+				try {
+					track_user_subscription_selected();
+				} catch ( err ) {
+					console.log( 'Subscription Selection Error = ', err );
+				}
+			}
+
+			if ( 'User Account Page' === webpage_type ) {
+				setTimeout(
+					function() {
+						var submitButton = document.getElementsByClassName( 'btn-success' );
+						var buttonClick  = submitButton[0];
+						buttonClick.setAttribute( 'id', 'update_account_details' );
+
+						var gender = '';
+						if ( null !== document.querySelector( 'input[name="gender"]:checked' ) ) {
+							gender = document.querySelector( 'input[name="gender"]:checked' ).value;
+						}
+
+						var user_details = {
+							'email_address': document.getElementById( 'email_address' ).value,
+							'mobile_number': document.getElementById( 'mobile_number' ).value,
+							'first_name': document.getElementById( 'first_name' ).value,
+							'last_name': document.getElementById( 'last_name' ).value,
+							'gender': gender
+						};
+						document.getElementById( 'update_account_details' ).addEventListener(
+							'click',
+							function() {
+								user_information_edited( user_details );
+							},
+							false
+						);
+					},
+					3000
+				);
+			}
+		}
+
+		track_facebook_utm();
+	}
+);
+
+
+jQuery( window ).load(
+	function() {
+		var win_height10  = 0;
+		var win_height25  = 0;
+		var win_height50  = 0;
+		var win_height75  = 0;
+		var win_height100 = 0;
+
+		jQuery( window ).scroll(
+			function () {
+				scroll_percent = getScrollPercent();
+
+				if ( 10 === scroll_percent ) {
+					win_height10++;
+					call_scrolldepth_event( win_height10, '10%' );
+				} else if ( 25 === scroll_percent ) {
+					win_height25++;
+					call_scrolldepth_event( win_height25, '25%' );
+				} else if ( 50 === scroll_percent ) {
+					win_height50++;
+					call_scrolldepth_event( win_height50, '50%' );
+				} else if ( 75 === scroll_percent ) {
+					win_height75++;
+					call_scrolldepth_event( win_height75, '75%' );
+				} else if ( 100 === scroll_percent ) {
+					win_height100++;
+					call_scrolldepth_event( win_height100, '100%' );
+				}
+			}
+		);
+	}
+);
+
+
+
+jQuery( window ).load(
+	function() {
+		var page_name = webpage_title;
+		setTimeout(
+			function() {
+				jQuery( '.ie-widget-bottom' ).on(
+					'click',
+					'.register',
+					function() {
+						var trigger      = 'Signup button';
+						var action       = 'User tried to Sign Up';
+						var page_section = 'Create an Account';
+
+						track_user_click_events( trigger, action, page_name, page_section );
+					}
+				);
+
+				jQuery( '.ie-widget-bottom' ).on(
+					'click',
+					'.login',
+					function() {
+						var trigger      = 'Signin button';
+						var action       = 'User tried to Sign In';
+						var page_section = 'Already have an account';
+
+						track_user_click_events( trigger, action, page_name, page_section );
+					}
+				);
+
+				jQuery( '.sign-up' ).on(
+					'click',
+					'a',
+					function() {
+						var link = jQuery( this ).text();
+						if ( link.toLowerCase().indexOf( 'register' ) >= 0 ) {
+							var trigger      = 'Paywall Signup button';
+							var action       = 'User tried to Sign Up to read article';
+							var page_section = 'Premium article Registration Paywall';
+						} else {
+							var trigger      = 'Paywall Subscribe button';
+							var action       = 'User tried to Subscribe to read article';
+							var page_section = 'Premium article Hard Paywall';
+						}
+
+						track_user_click_events( trigger, action, page_name, page_section );
+					}
+				);
+
+				jQuery( '.sign-in' ).on(
+					'click',
+					'a',
+					function() {
+						var trigger      = 'Paywall Signin button';
+						var action       = 'User already registered, trying to Sign In to read article';
+						var page_section = 'Premium article paywall';
+
+						track_user_click_events( trigger, action, page_name, page_section );
+					}
+				);
+
+				jQuery( document ).on(
+					'click',
+					'.plan-btn',
+					function() {
+						var trigger      = 'Paywall Subscribe button';
+						var action       = 'User tried to Subscribe to read article';
+						var page_section = 'Premium article Hard Paywall';
+
+						track_user_click_events( trigger, action, page_name, page_section );
+					}
+				);
+			},
+			3000
+		);
+	}
+);
+
+
+jQuery( document ).ready(
+	function() {
+		var page_name = webpage_title;
+
+		jQuery( '#fixedMenu' ).on(
+			'click',
+			'.m-navicon',
+			function() {
+				var trigger      = 'Mobile Hamburger button';
+				var action       = 'User viewed Mobile Menu';
+				var page_section = 'Top Menu';
+
+				track_user_click_events( trigger, action, page_name + ' Mobile', page_section );
+			}
+		);
+
+		jQuery( '#mofixednavbar' ).on(
+			'click',
+			'.hamburger-menu',
+			function() {
+				var trigger      = 'Hamburger button';
+				var action       = 'User viewed Hamburger Menu';
+				var page_section = 'Top Menu';
+
+				track_user_click_events( trigger, action, page_name, page_section );
+			}
+		);
+
+		jQuery( '#section-nav' ).on(
+			'click',
+			'.hamburger-menu-close',
+			function() {
+				var trigger      = 'Hamburger close button';
+				var action       = 'Hamburger Menu Closed';
+				var page_section = 'Hamburger Menu';
+
+				track_user_click_events( trigger, action, page_name, page_section );
+			}
+		);
+
+		if ( 0 < jQuery('.inh-dropdrown').length ) {
+			jQuery('.inh-dropdrown').click(function(e) {
+				var $this = jQuery(this);
+		
+				if ( $this.hasClass('opened') ) {
+					jQuery('.inh_tobe_selected').addClass('ie-hide');
+					jQuery('.ie-hide').removeClass('inh_tobe_selected');
+					jQuery(this).removeClass('opened');
+					jQuery( '#edition_button' ).attr( 'aria-expanded', 'false' );
+				} else {
+					jQuery('.ie-hide').addClass('inh_tobe_selected');
+					jQuery('.inh_tobe_selected').removeClass('ie-hide');
+					jQuery(this).addClass('opened');
+					jQuery( '#edition_button' ).attr( 'aria-expanded', 'true' );
+				}
+			});
+			jQuery( document ).keydown(function(e) {
+				if (e.key === "Escape") {
+					var $dropdown = jQuery( '.inh-dropdrown.opened' );
+					if ( $dropdown.length ) {
+						$dropdown.removeClass( 'opened' );
+						jQuery( '#edition_button' ).attr( 'aria-expanded', 'false' );
+						jQuery( '.inh_tobe_selected' ).addClass( 'ie-hide' );
+						jQuery( '.ie-hide' ).removeClass( 'inh_tobe_selected' );
+					}
+				}
+			});
+		}
+
+		jQuery( '.followusbx' ).on(
+			'click',
+			'.ieo-facebook',
+			function() {
+				var trigger      = 'Facebook button';
+				var action       = 'User followed on Facebook';
+				var page_section = 'Follow us Top Menu';
+
+				track_user_click_events( trigger, action, page_name, page_section );
+			}
+		);
+
+		jQuery( '.followusbx' ).on(
+			'click',
+			'.ieo-twitter',
+			function() {
+				var trigger      = 'Twitter button';
+				var action       = 'User followed on Twitter';
+				var page_section = 'Follow us Top Menu';
+
+				track_user_click_events( trigger, action, page_name, page_section );
+			}
+		);
+
+		jQuery( '#id_newsletter_subscription_popup' ).on(
+			'click',
+			'.close_icon',
+			function() {
+				var trigger      = 'Newsletter popup close button';
+				var action       = 'User closed Newsletter popup';
+				var page_section = 'Newsletter PopUp';
+
+				track_user_click_events( trigger, action, page_name, page_section );
+			}
+		);
+	}
+);
+
+/**
+ * Fire moengage event for first time user.
+ */
+function ieAnonymousMoengageEvent() {
+	let isFirstTimeuser = iemo_getCookie('moUserExistsv3');
+    if (
+		'undefined' !== typeof Moengage && 
+		null !== Moengage && 
+		'' !== Moengage &&
+		'undefined' !== typeof fireAnonymousMoengageEvent &&
+		true === fireAnonymousMoengageEvent &&
+		false === ieAnonymousMoengageEventFired &&
+		( 'undefined' !== typeof isFirstTimeuser && 'No' === isFirstTimeuser )
+	) {
+		ieAnonymousMoengageEventFired = true;
+        let event_name = 'firstTimeuserv3';
+        let eventObject = {
+			'userExists' : 'no',
+		};
+
+		if ( Object.keys(evolokResponseGlobal).length !== 0 ) {
+			for (var key in evolokResponseGlobal) {
+				if (evolokResponseGlobal.hasOwnProperty(key)) {
+					if (
+						key !== 'result' &&
+						key !== 'segments' &&
+						key !== 'userProperties' &&
+						key !== 'sessionKeys'
+					) {
+						eventObject[key] = evolokResponseGlobal[key]
+					}
+				}
+			}
+		}
+
+		Moengage.track_event(
+			event_name,
+			eventObject
+		);
+        console.log('moengageanonymousobject');
+		console.log(eventObject);
+    }
+}
+
+/**
+ * Get cookie value by cookie name.
+ */
+function iemo_getCookie( c_name ) {
+    var i,x,y,ARRcookies = document.cookie.split( ';' );
+    var arr_length       = ARRcookies.length;
+    for ( i = 0; i < arr_length; i++ ) {
+        x = ARRcookies[i].substr( 0,ARRcookies[i].indexOf( '=' ) );
+        y = ARRcookies[i].substr( ARRcookies[i].indexOf( '=' ) + 1 );
+        x = x.replace( /^\s+|\s+$/g,"" );
+        if ( x === c_name ) {
+            return unescape( y );
+        }
+    }
+}
+
+/*
+* Display the Read Article Progress on single article.
+*/
+
+function ie_show_progress_bar() {
+    
+	let postContent = jQuery( '.story_details' );
+	if ( postContent.length === 0 ) {
+		return;
+	}
+	
+	jQuery( window ).on( 'scroll', function() {
+        if ( postContent ) {
+            let postContentLength = postContent[0].innerHTML.length;
+            if ( postContentLength > 2000 ) {
+                let winScroll            = jQuery( document ).scrollTop();
+                let postTop              = postContent.offset().top;
+                let postHeight           = postContent[0].scrollHeight;
+                let height               = postHeight - jQuery( window ).height();
+                let scrolled             = ( ( winScroll - postTop ) / height );
+                let scrollPercentRounded = Math.round( scrolled * 100 );
+
+                if ( scrolled > 0 && scrollPercentRounded <= 100 ) {
+                    jQuery( '#reading-meter' ).show();
+                    jQuery( '#progress-bar' ).css( 'width', scrollPercentRounded + '%' );
+                    jQuery( '#progress-bar' ).html( scrollPercentRounded + '%' );
+                }
+
+                if ( scrollPercentRounded > 100 ) {
+                    jQuery( '#reading-meter' ).show();
+                    jQuery( '#progress-bar' ).css( 'width', '100%' );
+                    jQuery( '#progress-bar' ).html( '100%' ).css( 'left', '100%' );
+                }
+
+                if ( scrolled <= 0 ) {
+                    jQuery( '#reading-meter' ).hide();
+                }
+            }
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function (event) {
+
+});
+
+document.addEventListener('success-evolok-api', function(e) {
+	if ( 'mobile' !== device && 1 === progress_bar && 'ALLOW_ACCESS' === e.detail.result ) {
+		ie_show_progress_bar();
+	}
+});

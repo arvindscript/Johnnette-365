@@ -9,3 +9,6 @@ def home(request):
 
 def Contact(request):
     return render(request, "contact.html")    
+
+def News(request):
+    return render(request, "newspage.html")

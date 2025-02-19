@@ -1,0 +1,40 @@
+/**
+ * Faq js for admin.
+ *
+ * @package Ie_Faq_Section
+ */
+
+jQuery( document ).ready(
+	function(){
+		const accordionContent  = document.querySelectorAll( '.accordion' );
+		accordionContent.forEach( ( item, index ) => {
+			let header = item.querySelector( '.accordion__header' );
+			header.addEventListener(
+				'click', () => {
+					item.classList.toggle( 'active' );
+					let description = item.querySelector( '.accordion__body' );
+					if ( item.classList.contains( 'active' ) ) {
+						description.style.height = `${description.scrollHeight}px`;
+					} else {
+						description.style.height = '0px';
+					}
+					removeOpen( index );
+				}
+			);
+			}
+		);
+
+		function removeOpen( index1 ) {
+			accordionContent.forEach(
+				( item2, index2 ) => {
+					if ( index1 != index2 ) {
+						item2.classList.remove( 'active' );
+						let descr          = item2.querySelector( '.accordion__body' );
+						descr.style.height = '0px';
+					}
+				}
+			);
+		}
+	}
+	);
+

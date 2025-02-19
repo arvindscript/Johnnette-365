@@ -1,0 +1,243 @@
+/**
+ * Recommanded Widget Data.
+ *
+ * @package indian-express
+ */
+
+/**
+ * Get cookie for the subscription details.
+ *
+ * @param string cookieName Name of the cookie to get details.
+ */
+function getMyCookie( cookieName ) {
+
+	var nameEQ = cookieName + '=';
+	var ca     = document.cookie.split( ';' );
+	var newCa  = ca.length;
+	var i      = 0;
+	var c;
+
+	for ( i = 0; i < newCa; i++ ) {
+
+		c = ca[i];
+		while ( ' ' === c.charAt( 0 ) ) {
+			c = c.substring( 1, c.length );
+		}
+
+		if ( 0 === c.indexOf( nameEQ ) ) {
+			return c.substring( nameEQ.length, c.length );
+		}
+	}
+	return null;
+}
+jQuery( window ).load(
+	function() {
+		var storedUserCookie = getMyCookie( 'ie_userdata' );
+		// Latest Story.
+		var number = jQuery( '#latest_news_for_users' ).attr( 'data-number' );
+		var p_id   = jQuery( '#latest_news_for_users' ).attr( 'data-priority-id' );
+		var nonce  = jQuery( '#latestnews-ajax-nonce' ).val();
+		if ( null !== storedUserCookie ) {
+			storedUserCookie = JSON.parse( storedUserCookie );
+			if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'subscription_plan' ) && ( storedUserCookie.subscription_plan.includes( 'Digital Subscriber' ) || ( storedUserCookie.subscription_plan.includes( 'E-Paper Subscriber' ) && 'today-newsstand' === rvds_widget_data.pagetype ) ) ) {
+				jQuery.ajax(
+					{
+						url: rvds_widget_data.site_url + 'recommended-widget-data-ds/latest-news/',
+						type: 'POST',
+						data: {
+							number : number,
+							p_id   : p_id,
+							nonce  : nonce
+						},
+						success: function(data)
+					{		
+							jQuery( '#latest_news_for_users' ).empty();
+							jQuery( '#latest_news_for_users' ).append( data ); // @codingStandardsIgnoreLine
+							jQuery( '#latest_news' ).show();
+
+							setTimeout(function() {	
+								const target = document.querySelectorAll('.lazyloading');
+		
+								const observerCallback = (entries, observer) => {
+									entries.forEach(entry => {
+										if (entry.isIntersecting && entry.target.getAttribute("data-src")) {
+											entry.target.src = entry.target.getAttribute('data-src');
+											entry.target.removeAttribute('data-src');
+											// Unobserve the image
+											observer.unobserve(entry.target);
+										}
+									});
+								};
+		
+								const observerOptions = {
+									threshold: 0.2 // Adjust as needed
+								};
+		
+								const observer = new IntersectionObserver(observerCallback, observerOptions);
+		
+								if (target) {
+									target.forEach(img => {
+										observer.observe(img);
+									});
+								}
+							}, 1000); // 1 second delay
+							
+						}
+					}
+				);
+			}
+		}
+	}
+);
+
+jQuery( document ).ready(
+	function() {
+		if ( jQuery( '#subscribe_now_stories_for_users' ).length > 0 ) {
+			var title            = jQuery( '#subscribe_now_stories_for_users' ).attr( 'data-title' );
+			var api              = jQuery( '#subscribe_now_stories_for_users' ).attr( 'data-api' );
+			var containerclass   = jQuery( '#subscribe_now_stories_for_users' ).attr( 'data-class' );
+			var number           = jQuery( '#subscribe_now_stories_for_users' ).attr( 'data-number' );
+			var hideon           = jQuery( '#subscribe_now_stories_for_users' ).attr( 'data-hideon' );
+			var nonce            = jQuery( '#subscribernowev-ajax-nonce' ).val();
+			let storedUserCookie = getMyCookie( 'ie_userdata' );
+			var homepageinfo     = jQuery( '#homepageinfo' ).val();
+			if ( null !== storedUserCookie ) {
+				storedUserCookie = JSON.parse( storedUserCookie );
+				if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'subscription_plan' ) && ( storedUserCookie.subscription_plan.includes( 'Digital Subscriber' ) || ( storedUserCookie.subscription_plan.includes( 'E-Paper Subscriber' ) && 'today-newsstand' === rvds_widget_data.pagetype ) ) ) {
+					if (rvds_widget_data.srnData) {
+						jQuery('#subscribe_now_stories_for_users').empty();
+						jQuery('#subscribe_now_stories_for_users').append(rvds_widget_data.srnWidgetHtml); // @codingStandardsIgnoreLine
+						jQuery('#subscriber_reading_now,#subscriber_reading_now_home').show();
+					} else {
+						jQuery.ajax(
+							{
+								url : rvds_widget_data.ajax_url,
+								type: 'POST',
+								data: {
+									action : 'subscribernowev',
+									title  : title,
+									class  : containerclass,
+									number : number,
+									hideon : hideon,
+									api    : api,
+									nonce  : nonce,
+									info   : homepageinfo
+								},
+								success: function(data) {
+									jQuery( '#subscribe_now_stories_for_users' ).empty();
+									jQuery( '#subscribe_now_stories_for_users' ).append( data ); // @codingStandardsIgnoreLine
+									jQuery( '#subscriber_reading_now,#subscriber_reading_now_home' ).show();
+								}
+							}
+						);
+					}
+				}
+			}
+		}
+	}
+);
+
+jQuery( document ).ready(
+	function() {
+		if ( jQuery('#most_popular_for_users' ).length > 0 ) {
+			var title            = jQuery( '#most_popular_for_users' ).attr( 'data-title' );
+			var api              = jQuery( '#most_popular_for_users' ).attr( 'data-api' );
+			var containerclass   = jQuery( '#most_popular_for_users' ).attr( 'data-class' );
+			var number           = jQuery( '#most_popular_for_users' ).attr( 'data-number' );
+			var hideon           = jQuery( '#most_popular_for_users' ).attr( 'data-hideon' );
+			var nonce            = jQuery( '#mostread-ajax-nonce' ).val();
+			var homepageinfo     = jQuery( '#homepageinfo' ).val();
+			let storedUserCookie = getMyCookie( 'ie_userdata' );
+			var clogic           = jQuery( '#most_popular_for_users' ).attr( 'data-customlogic' );
+			var current_postid   = jQuery( '#most_popular_for_users' ).attr( 'data-current-postid' );
+			if( clogic ) {
+				api = '';
+			}
+
+			if ( null !== storedUserCookie ) {
+				storedUserCookie = JSON.parse( storedUserCookie );
+				if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'subscription_plan' ) && ( storedUserCookie.subscription_plan.includes( 'Digital Subscriber' ) || ( storedUserCookie.subscription_plan.includes( 'E-Paper Subscriber' ) && 'today-newsstand' === rvds_widget_data.pagetype ) ) ) {
+					if (rvds_widget_data.mostPopularData) {
+						jQuery('#most_popular_for_users').empty();
+						jQuery('#most_popular_for_users').append(rvds_widget_data.mostPopularHtml); // @codingStandardsIgnoreLine
+						jQuery('#most-popular,#most-popular-home').show();
+					} else {
+						jQuery.ajax(
+							{
+								url : rvds_widget_data.ajax_url,
+								type: 'POST',
+								data: {
+									action : 'mostpopularev',
+									title  : title,
+									class  : containerclass,
+									number : number,
+									hideon : hideon,
+									api    : api,
+									nonce  : nonce,
+									info   : homepageinfo,
+									c_pid  : current_postid,
+									clogic : clogic
+								},
+								success: function(data) {
+									if( '0' !== data ) {
+										jQuery( '#most_popular_for_users' ).empty();
+										jQuery( '#most_popular_for_users' ).append( data ); // @codingStandardsIgnoreLine
+										jQuery( '#most-popular,#most-popular-home' ).show();
+									}
+								}
+							}
+						);
+					}
+				}
+			}
+		}
+	}
+);
+
+jQuery( document ).ready(
+	function() {
+		if ( jQuery( '#featured_stories_for_users' ).length > 0 ) {
+			var title            = jQuery( '#featured_stories_for_users' ).attr( 'data-title' );
+			var api              = jQuery( '#featured_stories_for_users' ).attr( 'data-api' );
+			var containerclass   = jQuery( '#featured_stories_for_users' ).attr( 'data-class' );
+			var number           = jQuery( '#featured_stories_for_users' ).attr( 'data-number' );
+			var hideon           = jQuery( '#featured_stories_for_users' ).attr( 'data-hideon' );
+			var nonce            = jQuery( '#featuredstory-ajax-nonce' ).val();
+			let storedUserCookie = getMyCookie( 'ie_userdata' );
+			var homepageinfo     = jQuery( '#homepageinfo' ).val();
+			if ( null !== storedUserCookie ) {
+				storedUserCookie = JSON.parse( storedUserCookie );
+				if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'subscription_plan' ) && ( storedUserCookie.subscription_plan.includes( 'Digital Subscriber' ) || ( storedUserCookie.subscription_plan.includes( 'E-Paper Subscriber' ) && 'today-newsstand' === rvds_widget_data.pagetype ) ) ) {
+					if ( rvds_widget_data.fspData ) {
+						jQuery( '#featured_stories_for_users' ).empty();
+						jQuery( '#featured_stories_for_users' ).append( rvds_widget_data.fspWidgetHtml ); // @codingStandardsIgnoreLine
+						jQuery( '#featrued-story,#featrued-story-home' ).show();
+					} else {
+						jQuery.ajax(
+							{
+								url : rvds_widget_data.ajax_url,
+								type: 'POST',
+								data: {
+									action     : 'featuredstoryev',
+									title      : title,
+									class      : containerclass,
+									number     : number,
+									hideon     : hideon,
+									categories : api,
+									nonce      : nonce,
+									info       : homepageinfo
+								},
+								success: function(data)
+								{
+									jQuery( '#featured_stories_for_users' ).empty();
+									jQuery( '#featured_stories_for_users' ).append( data ); // @codingStandardsIgnoreLine
+									jQuery( '#featrued-story,#featrued-story-home' ).show();
+								}
+							}
+						);
+					}
+				}
+			}
+		}
+	}
+);

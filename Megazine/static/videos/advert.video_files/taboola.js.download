@@ -1,0 +1,46 @@
+
+if ( 'undefined' !== typeof taboolaExports ) {
+
+	if (
+		'undefined' !== typeof taboolaExports.mode
+		&& 'undefined' !== typeof taboolaExports.container
+		&& 'undefined' !== typeof taboolaExports.placement
+		&& 'undefined' !== typeof taboolaExports.target_type
+	) {
+
+		window._taboola = window._taboola || [];
+
+		_taboola.push( {
+			mode: taboolaExports.mode, // Like 'alternating-thumbnails-a',
+			container: taboolaExports.container, // Element's id
+			placement: taboolaExports.placement, // Like 'below article'
+			target_type: taboolaExports.target_type // Type like 'mix'
+		} );
+		window.dataLayer = window.dataLayer || [];
+		window.dataLayer.push( {
+			'event': 'taboola_pv',
+			'placement': taboolaExports.placement,
+		} );
+	}
+
+	if ( '1' === taboolaExports.taboola_recommendations_widget ) {
+		if ( '1' === taboolaExports.is_mobile ) {
+			window._taboola = window._taboola || [];
+			_taboola.push({
+				mode: 'organic-thumbnails-mid-personalisation-mob',
+				container: 'taboola-mid-article-personalisation',
+				placement: 'Mid Article Personalisation 1x3',
+				target_type: 'mix'
+			});
+		}
+		else {
+			window._taboola = window._taboola || [];
+			_taboola.push({
+				mode: 'organic-thumbnails-mid-personalisation-desk',
+				container: 'taboola-mid-article-personalisation',
+				placement: 'Mid Article Personalisation 3x1',
+				target_type: 'mix'
+			});
+		}
+	}
+}

@@ -1,0 +1,75 @@
+// Navigation mapping
+const navigationReferences = {
+    L1: {
+        home: '?ref=l1_home',
+        section: '?ref=l1_section',
+        article: '?ref=l1_article',
+        live_blog: '?ref=l1_lb',
+    },
+    L2: {
+        home: '?ref=l2_home',
+        section: '?ref=l2_section',
+        article: '?ref=l2_article',
+        live_blog: '?ref=l2_lb',
+    },
+    Hamburger: {
+        home: '?ref=bun_home',
+        section: '?ref=bun_section',
+        article: '?ref=bun_article',
+        live_blog: '?ref=bun_lb',
+    },
+    Breadcrumb: {
+        section: '?ref=breadcrumb_section',
+        article: '?ref=breadcrumb_article',
+        live_blog: '?ref=breadcrumb_lb',
+    },
+};
+
+// Function to get the reference based on navigation type and page type
+function getNavigationReference(navType) {
+    // Localized variable providing the current page type
+    if ( 'undefined' !== typeof ie_ref_data || undefined !== typeof ie_ref_data.page_type) {
+        const pageType = ie_ref_data.page_type;
+        if (navigationReferences[navType] && navigationReferences[navType][pageType]) {
+            return navigationReferences[navType][pageType];
+        }
+    }
+    return '';
+}
+
+// Function to apply tracking to links inside a specified element
+function applyTrackingById( elementId, navType ) {
+    if ( undefined !== elementId && '' !== navType ) {
+
+        const targetElement = document.getElementById( elementId );
+        if ( null !== targetElement && undefined !== targetElement ) {
+            // Get the navigation reference for the specified navigation type
+            const refValue = getNavigationReference(navType);
+    
+            // Find all links within the specified element and update their href
+            if ( '' !== refValue ) {
+                targetElement.querySelectorAll('a').forEach(function(link) {
+                    const originalHref = link.getAttribute('href');
+                    if (originalHref && !originalHref.includes(refValue)) {
+                        const updatedHref = originalHref + refValue;
+                        link.setAttribute('href', updatedHref);
+                    }
+                });
+            }
+
+        } else {
+            console.warn(`Element with ID '${elementId}' not found.`);
+        }
+    }  
+}
+
+// call the tracking fucntion with the it and navigation type
+const trackingData = [
+    { id: 'navbar', type: 'L1' },
+    { id: 'menu-header-sub-menu', type: 'L2' },
+    { id: 'section-nav', type: 'Hamburger' },
+    { id: 'ie-breadcrumb', type: 'Breadcrumb' },
+    { id: 'section-navbar', type: 'L1' }
+  ];
+  
+trackingData.forEach(({ id, type }) => applyTrackingById(id, type));

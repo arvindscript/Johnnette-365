@@ -1,0 +1,314 @@
+/**
+ * Create file for Pubmatic Ad Codes for desktop.
+ *
+ * @package  Express_Ad_code_Manager
+ */
+
+var PWT       = {};
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+var gptRan    = false;
+PWT.jsLoaded  = function() {
+	loadGpt();
+};
+( function() {
+	var purl             = location.href;
+	var url              = '//ads.pubmatic.com/AdServer/js/pwt/156021/7083';
+	var profileVersionId = '';
+	if ( purl.indexOf( 'pwtv=' ) > 0 ) {
+		var regexp  = /pwtv=(.*?)(&|$)/g;
+		var matches = regexp.exec( purl );
+		if ( matches.length >= 2 && matches[1].length > 0 ) {
+			profileVersionId = '/' + matches[1];
+		}
+	}
+
+	var wtads   = document.createElement( 'script' );
+	wtads.async = true;
+	wtads.type  = 'text/javascript';
+	wtads.src   = url + profileVersionId + '/pwt.js';
+	var node    = document.getElementsByTagName( 'script' )[0];
+	node.parentNode.insertBefore( wtads, node ); // phpcs:ignore WordPressVIPMinimum.JS.HTMLExecutingFunctions.insertBefore
+} )();
+var loadGpt = function() {
+	// Check the gptRan flag.
+	if ( ! gptRan ) {
+		gptRan     = true;
+		var gads   = document.createElement( 'script' );
+		var useSSL = 'https:' == document.location.protocol;
+		gads.src   = (useSSL ? 'https:' : 'http:') + '//www.googletagservices.com/tag/js/gpt.js';
+		var node   = document.getElementsByTagName( 'script' )[0];
+		node.parentNode.insertBefore( gads, node ); // phpcs:ignore WordPressVIPMinimum.JS.HTMLExecutingFunctions.insertBefore
+	}
+}
+// Failsafe to call gpt.
+setTimeout( loadGpt, 500 );
+
+// this function will act as a lock and will call the GPT API.
+function initAdserver( forced ) {
+	if ( ( forced === true && window.initAdserverFlag !== true ) || ( PWT.a9_BidsReceived && PWT.ow_BidsReceived ) ) {
+		window.initAdserverFlag = true;
+		PWT.a9_BidsReceived     = PWT.ow_BidsReceived = false;
+		googletag.pubads().refresh(); 
+	}
+}
+
+var ad_units_slots = ad_code_params.ad_units;
+var pubAdslots     = [];
+if ( 0 !== ad_units_slots.length ) {
+	ad_units_slots.forEach(
+		function ( ad_element ) {
+			pubAdslots.push(
+				{
+					slotID: ad_element.slot_id,
+					sizes: ad_element.slot_size
+				}
+			);
+		}
+	);
+}
+
+window.googletag = window.googletag || { cmd: [] };
+setTimeout( () => {
+	googletag.cmd.push(
+		function() {
+
+			var displayAdslots     = [];
+
+			if ( 'undefined' !== typeof ad_code_params ) {
+				var ad_units = ad_code_params.ad_units;
+			}
+
+			var pageAction = ad_code_params.page_action;
+
+			if ( 0 !== ad_units.length ) {
+
+				var userType = getUserType();
+
+				if ( undefined !== userType && 'Premium' === userType ) {
+					var notRemoveAdsSingle = [ 'gpt_ad_IE_ROS_ATF_728X90', 'gpt_ad_IE_ROS_ROTATE_1_300X250' ];
+				}
+
+
+				var pub_ad_slot   = 0;
+				var pub_ad_count  = 0;
+				var pub_target_id = 0;
+				ad_units.forEach(
+					function (ad_element) {
+
+						if ( Array.isArray( notRemoveAdsSingle ) ) {
+							if (
+								! notRemoveAdsSingle.includes( ad_element.slot_id )
+								&& ( 0 < jQuery( '#' + ad_element.slot_id ).length || 0 < jQuery('[data-id="' + ad_element.slot_id + '"]').length )
+								&& ( 'single' === pageAction )
+							) {
+								if ( 0 < jQuery( '#' + ad_element.slot_id ).closest( '.adsbox970x90' ).length ) {
+									jQuery( '#' + ad_element.slot_id ).closest( '.adsbox970x90' ).remove();
+									if ( jQuery( '.breaking-news' ).length ) {
+										jQuery( '.breaking-news' ).addClass( 'loggedin-gap-ev-user' );
+									}
+									console.log( 'adsbox970x90' );
+								} else if ( 0 < jQuery( '#' + ad_element.slot_id ).closest( '.add-first' ).length ) {
+									jQuery( '#' + ad_element.slot_id ).closest( '.add-first' ).remove();
+									console.log( 'add-first' );
+								} else if ( 0 < jQuery( '#' + ad_element.slot_id ).closest( '.ie-int-campign-ad' ).length ) {
+									jQuery( '#' + ad_element.slot_id ).closest( '.ie-int-campign-ad' ).remove();
+								} else {
+									if ( 'Advertisement' === jQuery( '#' + ad_element.slot_id ).prev('.ie-adtext').html() ) {
+										jQuery( '#' + ad_element.slot_id ).parent('.adboxtop').css('padding-bottom',0);
+										jQuery( '#' + ad_element.slot_id ).parent('.adboxtop').css( 'min-height',0 );
+										jQuery( '#' + ad_element.slot_id ).prev('.ie-adtext').remove();
+									}
+
+									if ( ! notRemoveAdsSingle.includes( 'gpt_ad_IE_ROS_ATF_1X1' ) ) {
+										if ( 0 < jQuery('.osv-ad-class').length ) {
+											jQuery('.osv-ad-class').remove();
+										}
+									}
+
+									jQuery( '#' + ad_element.slot_id ).remove();
+									console.log( 'direct' );
+								}
+								return;
+							}
+						}
+
+						if ( ad_element.slot_id && 0 < jQuery( '#' + ad_element.slot_id ).length ) {
+							displayAdslots.push( ad_element.slot_id );
+							if ( 'gpt_ad_IE_ROS_OOP_INNOV1' === ad_element.slot_id || 'gpt_ad_IE_ROS_OOP_INNOV2' === ad_element.slot_id ) {
+								googletag.defineOutOfPageSlot( ad_element.slot_name, ad_element.slot_id ).addService( googletag.pubads() );
+							} else if ( '' !== ad_element.slot_size ) {
+								pub_ad_slot++;
+								pub_ad_count  = 's' + pub_ad_slot;
+								pub_target_id = pub_ad_slot + 'abc';
+								pub_ad_count  = googletag.defineSlot( ad_element.slot_name, ad_element.slot_size, ad_element.slot_id ).addService( googletag.pubads() );
+								pub_ad_count.setTargeting( pub_target_id, 123 );
+							} else {
+								googletag.defineSlot( ad_element.slot_name, ad_element.slot_id ).addService( googletag.pubads() );
+							}
+						}
+					}
+				);
+			}
+			jQuery( '.top-ads-mobile' ).css( 'background-color', '#efefef' );
+			jQuery( '.ie-adtext' ).css( 'color', '#6b6b6b' );
+
+			if ( ad_code_params.articleId ) {
+				var articleid         = ad_code_params.articleId;
+				var target_article_id = articleid.toString();
+				googletag.pubads().setTargeting( 'HDFCIE', target_article_id );
+			}
+			if ( 'undefined' !== typeof ad_code_params.sponsor_tagId && ad_code_params.sponsor_tagId ) {
+				var sponsor_tag_id = ad_code_params.sponsor_tagId;
+				var target_tag_id  = sponsor_tag_id.toString();
+				googletag.pubads().setTargeting( 'PROTECTSPRAY', target_tag_id );
+			}
+
+			if ( 'undefined' !== typeof ad_code_params.tag_slug && ad_code_params.tag_slug ) {
+				var tagSlug = ad_code_params.tag_slug;
+				googletag.pubads().setTargeting( 'Tag', tagSlug );
+			}
+
+			googletag.pubads().collapseEmptyDivs();
+			googletag.pubads().setTargeting( 'v', 'classifieds' );
+			if ( ad_code_params.pubarticleId ) {
+				var pubarticleid          = ad_code_params.pubarticleId;
+				var pub_target_article_id = pubarticleid.toString();
+				googletag.pubads().setTargeting( 'article-id', pub_target_article_id );
+			}
+			googletag.pubads().enableSingleRequest();
+			googletag.pubads().disableInitialLoad();
+			googletag.enableServices();
+
+			displayAdslots.forEach(
+				function( element ) {
+					if ( element && 0 < jQuery( '#' + element ).length ) {
+						googletag.display( element );
+					}
+				}
+			);
+
+			// OpenWrap code START here.
+			if ( typeof PWT.requestBids === 'function' ) {
+				PWT.requestBids(
+					PWT.generateConfForGPT( googletag.pubads().getSlots() ),
+					function( displayAdslots ) {
+						PWT.addKeyValuePairsToGPTSlots( displayAdslots );
+						PWT.ow_BidsReceived = true;
+						initAdserver( false );
+					}
+				);
+			}
+			// No need to handle "else" part as we have A9 wrapper on page.
+			// OpenWrap code END here.
+
+			var FAILSAFE_TIMEOUT = 1000; // this timeout should be more than OpenWrap and A9 timeout.
+			setTimeout(
+				function() {
+					initAdserver( true ); // calling this function with forced mode set to true so that GPT API is always executed.
+				},
+				FAILSAFE_TIMEOUT
+			);
+
+		}
+	);
+	},
+	1000
+);
+
+
+
+jQuery.fn.isOnScreen = function() {
+	try {
+		var elementTop     = jQuery( this ).offset().top;
+		var elementBottom  = elementTop + jQuery( this ).outerHeight();
+		var viewportTop    = jQuery( window ).scrollTop();
+		var viewportBottom = viewportTop + jQuery( window ).height();
+		return elementBottom > viewportTop && elementTop < viewportBottom + 300;
+	} catch (err) {
+	}
+};
+function ie_dfp_ads()
+{
+	jQuery( '.dfp_ads' ).each(
+		function()
+		{
+			var cur_obj = jQuery( this );
+			if (cur_obj.isOnScreen() && cur_obj.attr( 'data-id' )) {
+				var ids = cur_obj.attr( 'data-id' );
+				cur_obj.attr( 'id', cur_obj.attr( 'data-id' ) );
+				cur_obj.removeAttr( 'data-id' );
+				ie_show_ads( ids );
+			}
+		}
+	);
+}
+jQuery( window ).scroll(
+	function()
+	{
+		ie_dfp_ads();
+	}
+);
+function ie_show_ads( showid )
+{
+	var para  = document.createElement( 'script' );
+	var divbx = document.createElement( 'div' );
+	divbx.id  = showid;
+	var a     = 'googletag.cmd.push(function() { googletag.display("' + divbx.id + '"); });';
+	var t     = document.createTextNode( a );
+	para.appendChild( t );
+	divbx.appendChild( para );
+	document.getElementById( showid ).appendChild( divbx );
+}
+
+/**
+ * Get cookie for the subscription details.
+ *
+ * @param string cookieName Name of the cookie to get details.
+ */
+function getUserSubscriptionCookie( cookieName ) {
+
+	var nameEQ = cookieName + '=';
+	var ca     = document.cookie.split( ';' );
+	var newCa  = ca.length;
+	var i      = 0;
+	var c;
+
+	for ( i = 0; i < newCa; i++ ) {
+
+		c = ca[i];
+		while ( ' ' === c.charAt( 0 ) ) {
+			c = c.substring( 1, c.length );
+		}
+
+		if ( 0 === c.indexOf( nameEQ ) ) {
+			return c.substring( nameEQ.length, c.length );
+		}
+	}
+	return null;
+}
+
+/**
+ * Get User Type whether Premium, Registered or Anonymous.
+ */
+function getUserType() {
+
+	let anonymusuer = getUserSubscriptionCookie('oauth_user');
+	let userType    = 'Anonymous'
+
+	if ( anonymusuer ) {
+		let storedUserCookie = getUserSubscriptionCookie( 'ie_userdata' );
+
+		if ( null !== storedUserCookie ) {
+			storedUserCookie = JSON.parse( storedUserCookie );
+		}
+
+		if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'subscription_plan' ) && storedUserCookie.subscription_plan.includes( 'Digital Subscriber' ) ) {
+			userType = 'Premium';
+		} else {
+			userType = 'Registered';
+		}
+
+	}
+	return userType;
+}

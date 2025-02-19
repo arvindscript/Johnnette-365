@@ -1,0 +1,98 @@
+/**
+ * File is used to capture paywall datawall events ev-event-api-integration.js.
+ * 
+ * @package indian-express
+ */
+
+/**
+ * Function to capture events.
+ */
+function event_api_integration( eventType = '', extraInfo1 = '', eventName = ''  ) {
+	var api_domain  = eveventdata.api_domain;
+	var event_type  = eveventdata.eventType;
+	var extra_info1 = eveventdata.extraInfo1;
+	var event_name  = eveventdata.eventName;
+	if ( '' !== eventType || 'undefined' !== jQuery.type( eventType )) {
+		event_type  = eventType;
+		extra_info1 = extraInfo1;
+	}
+
+	if ( '' !== eventName || 'undefined' !== jQuery.type( eventName )) {
+		event_name  = eventName;
+		extra_info1 = extraInfo1;
+	}
+
+	if ( 'undefined' !== typeof window.psdkvar && 'undefined' !== typeof window.psdkvar.uaevent ) {
+		window.psdkvar.uaevent( event_name, event_type, extra_info1, eveventdata.extraInfo2, eveventdata.extraInfo3 );
+	}
+}
+jQuery( document ).ready(
+	function() {
+
+		jQuery( 'body' ).on(
+			'click',
+			'.ev-engagement .sign-up a',
+			function() {
+				let storedUserCookie = getCookiedata( 'ie_userdata' );
+				var event_name       = jQuery( this ).html();
+				if ( null !== storedUserCookie ) {
+					storedUserCookie = JSON.parse( storedUserCookie );
+					if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'requireEntitlement' ) ) {
+						if ( false === storedUserCookie.requireEntitlement ) {
+							event_api_integration( 'register', 'clicked', 'datawall' );
+						}
+						if ( true === storedUserCookie.requireEntitlement ) {
+							event_api_integration( event_name , 'clicked', 'premium_paywall' );
+						}
+					}
+				}
+			}
+		);
+		jQuery( 'body' ).on(
+			'click',
+			'.ev-engagement .sign-in a',
+			function() {
+				let storedUserCookie = getCookiedata( 'ie_userdata' );
+				if ( null !== storedUserCookie ) {
+					storedUserCookie = JSON.parse( storedUserCookie );
+					if ( storedUserCookie instanceof Object && storedUserCookie.hasOwnProperty( 'requireEntitlement' ) ) {
+						if ( false === storedUserCookie.requireEntitlement ) {
+							event_api_integration( 'signin', 'clicked', 'datawall' );
+						}
+						if ( true === storedUserCookie.requireEntitlement ) {
+							event_api_integration( 'signin', 'clicked', 'premium_paywall' );
+						}
+					}
+				}
+			}
+		);
+
+	}
+);
+
+/**
+ * Get cookie for the subscription details.
+ *
+ * @param string cookieName Name of the cookie to get details.
+ */
+function getCookiedata( cookieName ) {
+
+	var nameEQ = cookieName + '=';
+	var ca     = document.cookie.split( ';' );
+	var newCa  = ca.length;
+	var i      = 0;
+	var c;
+
+	for ( i = 0; i < newCa; i++ ) {
+
+		c = ca[i];
+		while ( ' ' === c.charAt( 0 ) ) {
+			c = c.substring( 1, c.length );
+		}
+
+		if ( 0 === c.indexOf( nameEQ ) ) {
+			return c.substring( nameEQ.length, c.length );
+		}
+	}
+	return null;
+}

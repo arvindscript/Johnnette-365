@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact Us{% endblock title %}
+
+{% block page_css %}
+<style>   
+    * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: Arial;
+        padding: 20px;
+        background: #f1f1f1;
+      }
+      
+      /* Header/Blog Title */
+      .header {
+        display:flex;
+        margin:80px;
+        padding: 30px;
+        font-size: 40px;
+        text-align: center;
+        background: white;
+      }
+      .para{
+        width: 75%;
+        margin:0px;
+        padding: 0px;
+        font-size: 20px;
+        text-align: center;
+       }
+
+      /* Create two unequal columns that floats next to each other */
+      /* Left column */
+      .leftcolumn {
+        float: left;
+        width: 75%;
+      }
+      .row{
+        padding:60px;
+        margin:15px;
+      }
+      /* Right column */
+      .rightcolumn {
+        float: left;
+        width: 25%;
+        padding-left: 20px;
+      }
+      .fakeimg{
+        /* float: left; */
+        width: 10%;
+        /* padding-left: 20px; */
+      }
+      .card1{
+        background-color: aqua;
+        /* float: left; */
+        margin: 10%;
+        padding: 10%;
+        border-radius: 20px ;
+        
+      }
+      /* Fake image */
+      .fakeimg {
+        background-color: #aaa;
+        width: 100%;
+        padding: 2px;
+      }
+      /* img{
+        height: 200px;
+        width: 765px;
+        margin: auto;
+      }
+       */
+       img {
+    display: block;
+    width: 100%;
+    max-width: 765px;
+    height: 200px;
+    margin: auto;
+   }  
+   
+      /* Add a card effect for articles */
+      .card {
+        /* background-color: white; */
+        padding: 20px;
+        margin-top: 20px;
+        font-size: 10px;
+      }
+      .card2{
+        background-color: white;
+        padding: 20px;
+        margin-top: 20px;
+        font-size: 10px;
+      }
+      .card:img{
+        height: 10px;
+      }
+      .container{
+        display: flex;
+        justify-content: space-evenly;
+        padding-left: 5px;
+      }
+      /* Clear floats after the columns */
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      
+      /* Footer */
+      .footer {
+        padding: 20px;
+        text-align: center;
+        background: #ddd;
+        margin-top: 20px;
+      }
+      .card-image {
+      flex-shrink: 0;
+    }
+    .card-image img {
+      width: 200px; /* Fixed width */
+      height: auto;
+      border-radius: 5px;
+      display: block;
+    }
+      /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+      @media screen and (max-width: 800px) {
+        .leftcolumn, .rightcolumn {
+          width: 100%;
+          padding: 0;
+        }
+      }
+</style>
+{% endblock page_css %}
+
+
+
+
+{% block content %}
+    
+<div class="header">
+  <img src="{% static '/img/ad1.png' %}" alt="">
+    <!-- <h2>Blog Name</h2> -->
+  </div>
+  <div class="para">
+    <p><b>News/&nbsp;Lifestyle/&nbsp;Food & WineTips</b> to check adulteration in raw black peppercorn, kali mirch 
+    <p><b>Tips to check adulteration in raw black peppercorn, kali mirch powder</b></p>
+    <p>Black peppercorn lends flavour and various health benefits to a dish.</p>
+  </div>
+  
+
+  <div class="row">
+    <div class="leftcolumn">
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Dec 7, 2017</h5>
+        <div class="fakeimg" style="height:200px;"><img src="{% static '/img/advertise.jpg' %}" alt=""></div>
+        <p>Here's how to check for adulteration (Photo: Freepik)</p>
+      </div>
+      <p>By: Lifestyle Desk
+New Delhi | February 18, 2025 09:30 IST
+Newsguard
+clock_logo4 min read
+facebook
+twitter
+whatsapp
+Reddit
+black peppercorns
+
+Here's how to check for adulteration (Photo: Freepik)
+Black peppercorn is one of the most widely used spices around the globe. With a pungent heat mixed with earthy and woody notes, black peppercorn lends flavour and makes a dish nutritious. But in recent times, black pepper has also been plagued by food adulteration, say experts. “Many cheap products and chemicals are mixed with black peppercorn to increase profit. Many clinical studies have discovered various types of chemicals or other products mixed in pepper powder and peppercorns,” said Rupeet Kaur, nutritionist and founder and CEO, Diet Ryt.
+
+Some of these chemicals/adulterants are so toxic that they may lead to heart failure, kidney dysfunction, liver disorders, stressed Kaur.
+
+Following are adulterants that are mixed
+
+Papaya seeds
+
+Papaya seeds look similar to black peppercorns after drying. “They are almost similar in size and colour. Papaya seeds are directly mixed with peppercorn and pepper powder because they are cheaper,” said Kaur.
+
+How to identify papaya seeds in pepper:</p>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;"><img src="{% static '/img/advert3.jpg' %}" alt=""></div>
+        <p>Some text..</p>
+
+      </div>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <!-- <div class="fakeimg" style="height:200px;"><video src="{% static '/videos/ad3.mp4' %}"></video></div> -->
+        
+        <p>Some text..</p>
+      </div>
+      
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+      </div>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+      </div>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+      </div>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+      </div>
+    </div>
+    <div class="container">
+        <div class="card-cont">
+            <h2>TITLE HEADING</h2>
+            <h5>Title description, Sep 2, 2017</h5>
+            <div class="fakeimg" style="height:200px;">Image</div>
+            <p>Some text..</p>
+          </div>
+          <div class="card-cont">
+            <h2>TITLE HEADING</h2>
+            <h5>Title description, Sep 2, 2017</h5>
+            <div class="fakeimg" style="height:200px;">Image</div>
+            <p>Some text..</p>
+          </div>  
+    </div>
+    
+    <div class="rightcolumn">
+      <div class="card">
+        <!-- <h2>Advertise</h2> -->
+         <p>Advertisement</p>
+         <img src="{% static '/img/right-advertise.png' %}" alt="">
+        
+      </div>
+      <div class="card1">
+        <h3> Post</h3>
+        <img src="{% static '/img/right-advertise.png' %}" alt="">
+        
+        
+      </div>
+      <div class="card2">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+            <img src="{% static '/img/right-advertise.png' %}" alt="">
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+            <img src="{% static '/img/right-advertise.png' %}" alt="">
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+            <img src="{% static '/img/right-advertise.png' %}" alt="">
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+            <img src="{% static '/img/right-advertise.png' %}" alt="">
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+            <img src="{% static '/img/right-advertise.png' %}" alt="">
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+            <img src="{% static '/img/right-advertise.png' %}" alt="">
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+      </div>
+      <div class="card">
+        <p><b>More Lifestyle</b></p>
+        <p>
+            TMKOC actor Surbhi Chandna says she tried the GM diet during Qubool Hai days: 'Thought it was really crazy'</p>
+      </div>
+    </div>
+  </div>
+  
+ 
+{% endblock content %}
+
+
+
+{% block page_js %}
+{% endblock page_js %}

@@ -1,0 +1,43 @@
+
+var ftGUID_9235690="61396E1D6EB2BA";
+var ftConfID_9235690="0";
+var ftParams_9235690="ftx=&fty=&ftadz=&ftscw=&ft_custom=&ftOBA=1&ft_agentEnv=0&ft_referrer=https%3A%2F%2Findianexpress.com%2Farticle%2Flifestyle%2Ffood-wine%2Ftips-check-adulteration-in-raw-black-peppercorns-powder-expert-9827646%2F%3Fref%3Dshrt_article_readfull&gdpr=0&gdpr_consent=&cachebuster=782733.9668498639";
+var ftKeyword_9235690="";
+var ftCustom_9235690="";
+var ftSection_9235690="";
+var ftSegment_9235690="";
+var ftSegmentList_9235690=[];
+var ftRuleMatch_9235690="0";
+var ftTimestamp_9235690="1739947485";
+var ftGeoC2_9235690="in";
+var ftGeoState_9235690="up";
+var ftGeoCity_9235690="gautam buddha nagar";
+var ftISP_9235690="bharti infotel ltd.";
+var ftSpeed_9235690="xdsl";
+var ftConnType_9235690="nat";
+var ftDMA_9235690="356010";
+var ftLong_9235690="77.34";
+var ftLat_9235690="28.57";
+var ftPostal_9235690="201303";
+var ftTimeZone_9235690="+530";
+var ftMobileCarrier_9235690="";
+var ftImp9235690 = {};
+ftImp9235690.privacy = "x";
+ftImp9235690.guidAge = "120";
+ftImp9235690.impID = "44D02733-8BF0-FB55-D43A-D98B00F551F9";
+ftImp9235690.duid = "FT:61396E1D6EB2BA";
+
+ftImp9235690.ft_tpplid = "";
+ftImp9235690.ft_c = {};
+ftImp9235690.gdpr = "0";
+ftImp9235690.gdpr_consent = "";
+ftImp9235690.gdpr_pd = "";
+ftImp9235690.oob_consent = "";
+ftImp9235690.gdprStoredConsent = "";
+ftImp9235690.us_privacy = "";
+ftImp9235690.gpc = "";
+
+var ftCreativeId_9235690 = "5145464";
+document.write('<scr'+'ipt src="https://ajs-assets.ftstatic.com/ftUtils.js" id="ftscript_m9235690" name="ftscript_m9235690"></scr'+'ipt>');window.fTChecker=window.fTChecker||function(id){if(!id)return false;id=""+id;if(window.hasOwnProperty("ftUtils")){window["ft"+id]=Object.assign({},window.ftUtils.common);window["ft"+id].getBannerConfig(id)}else(function(id){window.setTimeout(function(){window.fTChecker(id)},50)})(id)};window.fTChecker("9235690");
+
+
