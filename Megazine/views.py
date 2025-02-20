@@ -18,4 +18,7 @@ def Contact(request):
     return render(request, "contact.html")  
 
 def Newspage(request):
-    return render(request, "newspage.html")     
+    return render(request, "newspage.html") 
+
+def About(request):
+    return render(request, "about.html")      

@@ -7,9 +7,9 @@ from django.db import models
 #     emails=models.charField(max_length=50)
 #     message=models.TextField()
 class Contact_Us(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=50)
-    phone = models.CharField(max_length=15)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, default="", blank=True)
     message = models.TextField()
 
     def __str__(self):
