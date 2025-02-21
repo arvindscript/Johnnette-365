@@ -14,5 +14,6 @@ urlpatterns = [
     path("contact", views.Contact, name="contact"),
     path("newspage", views.Newspage, name="newspage"),
     path("about", views.About, name="about"),
+    path("articles", views.Articles, name="articles"),
  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

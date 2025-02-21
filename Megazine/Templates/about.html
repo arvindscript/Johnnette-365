@@ -400,22 +400,18 @@
 
 {% comment %} ABOUT CEO {% endcomment %}
 
+{% for about in about %}
 <div class="container">
     <div class="row">
         <div class="col-6">
- 
             <div class="about-img bounce-in-bottom-normal"> <!-- Add the animation class here -->
-                <img src="{% static '/img/ceo.jpg' %}" alt="About Us">
+                <img src="{{ about.image.url }}" alt="About Us">
             </div>
         </div>
         <div class="col-6">
             <h1>EDITORS NOTE </h1>
-            <h3>Lt. Commander John Livingstone
-                Editor- in- Chief
-                CEO & Founder,
-                Livingstone Institute of Future Technologies</h3>
-            <p>Welcome to a new era of innovation—one that is fueled by the relentless pursuit of excellence and defined by disruptive technologies that are transforming industries at an unprecedented pace. As we delve into the landscape of Future Technologies, I am reminded of the words of the legendary futurist Arthur C. Clarke: “The only way to discover the limits of the possible is to go beyond them into the impossible.” At FutureTech, we are committed to bringing you the most compelling stories of how cutting-edge technologies—driven by the brilliance of AI, robotics, and advanced analytics—are redefining industries and reshaping our world. ​</p>
-            <p>The future isn't something we simply step into—it's something we shape. Let's be bold, challenge the status quo, and fuel the kind of innovation that doesn't just anticipate what's next but creates it. Whether you're a tech pioneer, an investor with a vision, or an entrepreneur ready to take on the world, now is the time to act. Because in this fast-changing world, those who dare to lead will always be the ones defining the future. Together, let's turn ideas into impact and ambition into reality, setting a course for greatness that others will follow.</p>
+            <h3>{{ about.Title }}</h3>
+            <p>{{ about.description }}</p>
             
             <div class="social-icons">
                 <a href="#" class="btn-outline-primary"><i class="fab fa-facebook-f"></i></a>
@@ -426,8 +422,7 @@
         </div>
     </div>
 </div>
-
-
+{% endfor %}
 
 {% comment %} TEAM MEMBER DETAILS {% endcomment %}
 
@@ -440,6 +435,7 @@
                 <p>Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet.</p>
                 <a class="btn btn-primary" href="">Read More</a>
             </div>
+        
             <div class="col-right">
                 <div class="team-row">
                     <div class="team-item">

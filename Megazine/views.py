@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from .models import Contact_Us
+from .models import Contact_Us, AboutFounder
 
 def home(request):
     return render(request, "home.html")
@@ -21,4 +21,11 @@ def Newspage(request):
     return render(request, "newspage.html") 
 
 def About(request):
-    return render(request, "about.html")      
+    about = AboutFounder.objects.all()
+    context={
+        'about':about
+    }
+    return render(request, "about.html", context)      
+
+def Articles(request):
+    return render(request, "articles.html") 

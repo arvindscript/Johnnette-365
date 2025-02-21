@@ -1,0 +1,661 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Articles{% endblock title %} 
+
+
+{% block meta_tags %} 
+{% endblock meta_tags %}
+
+
+
+
+{% block page_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+    <style>
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #444;
+    font-family: Arial, sans-serif;
+}
+
+.magazine-container {
+    max-width: 1200px;
+    width: 100%; 
+    margin: 150px auto 20px; 
+    padding: 20px;
+    /* background-color: #f04e30; */
+    border-radius: 10px; 
+    box-sizing: border-box;
+}
+
+.heading {
+    text-align: center;
+    color: white;
+    margin-top: 0; 
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+
+@media screen and (max-width: 768px) {
+    .magazine-container {
+        padding: 15px; 
+        margin: 100px auto 20px; 
+        width: 95%; 
+    }
+
+    .heading {
+        font-size: 24px; 
+    }
+
+    .row {
+        justify-content: center; /
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .magazine-container {
+        padding: 10px; 
+        margin: 60px auto 20px;
+        width: 90%; 
+    }
+
+    .heading {
+        font-size: 20px; 
+    }
+}
+
+
+
+.col-md-8 {
+    flex: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    min-width: 60%;
+    background-color: #333333;
+    border-radius: 8px;
+    
+}
+
+
+.inner-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    
+
+}
+
+
+h1 {
+    margin:10%;
+    padding-top: 1%;
+}
+
+
+/* .article-item {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-top: 5%;
+} */
+
+
+/* left side */
+
+
+
+/* Container and general styling */
+.container {
+    padding: 20px;
+}
+
+.custom-title {
+    font-size: 3rem;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+/* Layout for the rows and columns */
+.custom-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 60px;
+}
+
+.custom-card {
+    flex: 1;
+    min-width: 300px;
+    max-width: 33%;
+    position: relative;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.card-image {
+    background-size:cover;
+    background-position: center;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.card-content {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 20px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.card-meta {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.meta-item img {
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.meta-icon {
+    margin-right: 5px;
+}
+
+.meta-item small {
+    font-size: 0.9rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* end left */
+
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.arrow-btn {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+
+.col-md-4 {
+    flex: 1;
+    min-width: 35%;
+}
+
+.MAGAZINE-sidebar {
+    background: #333;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.ad-container {
+    text-align: center;
+}
+
+.video-wrapper {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.ad-video {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.play-pause-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+
+.MAGAZINE-small-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.MAGAZINE-small {
+    background: #444;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.MAGAZINE-img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Subscription*/
+.section-title {
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+}
+
+.newsletter-container {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+}
+
+.input-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.input-group input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 70%;
+}
+
+.input-group button {
+    padding: 10px;
+    background: #f04e30;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+
+@media (max-width: 1024px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .col-md-8, .col-md-4 {
+        min-width: 100%;
+    }
+
+    .article-item {
+        width: 100%;
+    }
+
+    .overlay {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .newsletter-container {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .heading h1 {
+        font-size: 24px;
+
+    }
+
+    .ad-video {
+        height: auto;
+    }
+
+    .overlay {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .arrow-btn {
+        font-size: 12px;
+    }
+
+    .input-group input {
+        width: 60%;
+    }
+}
+
+@media (max-width: 480px) {
+    .heading h1 {
+        font-size: 20px;
+    }
+
+    .overlay {
+        font-size: 12px;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group input, .input-group button {
+        width: 100%;
+    }
+}
+
+
+
+
+@keyframes roll-in-right-normal {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.custom-card {
+  animation: roll-in-right-normal 1.6s ease-out 0s 1 normal both;
+}
+
+
+
+
+
+
+
+
+
+    </style>
+        
+        
+
+{% endblock page_css %}
+
+
+{% block content %}
+
+
+
+
+
+
+
+
+<div class="magazine-container">
+    <div class="custom-container">
+        <div class="row">
+           <div class="col-md-8">
+                <div class="inner-container">
+                    <div class="articles">
+                       
+
+
+
+
+                        <div class="container">
+                            <h2 class="custom-title">Articles</h2>
+                        
+                            <div class="custom-row">
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/coding.jpg' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">BEHIND THE SCENES : HOW CODING FUELS DRONES POWER</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+                        
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/Drone2.jpg' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">Drones with Artificial Intelligence:Navigating Tech’s New Frontie</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+                        
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/VideoSurveillance.jpg' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">MAKING USE OF VIDEO SURVEILLANCE TECHNOLOGY</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/PARADIGM.jpg' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">PARADIGM SHIFT IN MARITIME WARFARE</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/unicorn2.jpg' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">
+                                        HOW TO BECOME THE NEXT TECH UNICORN</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/ai.jpg' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">THE DOUBLE-EDGED SWORD OF ARTIFICIAL INTELLIGENCE</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="custom-card">
+                                <div class="card-image" style="background-image: url('{% static 'img/autopilot.png' %}');">
+                                  <div class="card-content">
+                                    <h3 class="card-title">MUSIC ON AUTOPILOT: IS AI PUSHING ARTISTS OUT OF THE PICTURE?</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="custom-card">
+                               <div class="card-image" style="background-image: url('{% static 'img/Aviation.jpg' %}');">
+
+                                  <div class="card-content">
+                                    <h3 class="card-title">
+                                        Cyber Threats to Aviation, Space and Need for Resilience</h3>
+                                    <span class="arrow-btn"> Read More</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        
+                        
+
+
+
+
+
+
+
+
+
+<!-- here -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="MAGAZINE-sidebar">
+
+                    <div class="ad-container">
+                        <div class="section-title">
+                            <h4>Advertisement</h4>
+                        </div>
+                    
+                        <div class="ad-content">
+                            <div class="video-wrapper">
+                                <video class="ad-video" autoplay muted loop>
+                                    <source src="{% static '/videos/video4.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="play-pause-btn">⏸</button>
+                            </div>
+                        </div>
+                    
+                        <div class="ad-content">
+                            <div class="video-wrapper">
+                                <video class="ad-video" autoplay muted loop>
+                                    <source src="{% static '/videos/video3.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="play-pause-btn">⏸</button>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="MAGAZINE-small-sidebar"> 
+                            <div class="MAGAZINE-small">
+                                <img src="{% static '/img/unicorn.jpg' %}" class="MAGAZINE-img" alt="">
+                                <h3>Featured Article</h3>
+                                <a href="#" class="MAGAZINE-subtitle">4 Lorem ipsum dolor sit amet consectetur adipisicing elit.......</a>
+                            </div>
+                            <div class="MAGAZINE-small">
+                                <img src="{% static '/img/PARADIGM.jpg' %}" class="MAGAZINE-img" alt="">
+                                <h3>Featured Article</h3>
+                                <a href="#" class="MAGAZINE-subtitle"> HOW TO BECOME THE NEXT TECHUNICORN</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-title">
+                    <h4>Subscribe</h4>
+                    <div class="newsletter-container">
+                        <p>Aliqu justo et labore at eirmod justo sea erat diam dolor diam vero kasd</p>
+                        <div class="input-group">
+                            <input type="text" placeholder="Your Email">
+                            <button>Subscribe</button>
+                        </div>
+                        <small>Lorem ipsum dolor sit amet elit</small>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+{% endblock content %} 
+
+
+
+
+
+
+
+
+
+
+
+{% block page_js %}
+
+
+<script>
+    document.querySelectorAll(".video-wrapper").forEach((wrapper) => {
+        let video = wrapper.querySelector(".ad-video");
+        let button = wrapper.querySelector(".play-pause-btn");
+        let icon = button.querySelector("i");
+
+        button.addEventListener("click", function() {
+            if (video.paused) {
+                video.play();
+                icon.classList.replace("fa-play", "fa-pause"); 
+            } else {
+                video.pause();
+                icon.classList.replace("fa-pause", "fa-play"); 
+            }
+        });
+    });
+</script>
+
+{% endblock page_js %}
