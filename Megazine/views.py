@@ -28,4 +28,8 @@ def About(request):
     return render(request, "about.html", context)      
 
 def Articles(request):
-    return render(request, "articles.html") 
+    art = Articlespage.objects.all()
+    cont={
+        'art':art
+    }
+    return render(request, "articles.html",cont) 

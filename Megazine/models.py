@@ -17,5 +17,8 @@ class AboutFounder(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='Image/')
 
-class Articlespage(models.Models):
-        
+class Articlespage(models.Model):
+   Title = models.CharField(max_length=225)
+   description = models.TextField()
+   image = models.ImageField(upload_to='Image/')
+  

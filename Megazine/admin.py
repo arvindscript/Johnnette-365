@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Contact_Us, AboutFounder
+from .models import Contact_Us, AboutFounder,Articlespage
 
 # Register your models here.
 
@@ -8,5 +8,7 @@ from .models import Contact_Us, AboutFounder
 
 admin.site.register(Contact_Us)
 admin.site.register(AboutFounder)
+admin.site.register(Articlespage)
+
 
 

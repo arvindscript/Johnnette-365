@@ -461,20 +461,23 @@ h1 {
 
 
 
-
+                        {% for art in Articles %}
                         <div class="container">
                             <h2 class="custom-title">Articles</h2>
-                        
+                            h3>{{ about.Title }}</h3>
+                            
                             <div class="custom-row">
                               <div class="custom-card">
                                 <div class="card-image" style="background-image: url('{% static 'img/coding.jpg' %}');">
+                                    <img src="{{ about.image.url }}" alt="Articles Page">
                                   <div class="card-content">
                                     <h3 class="card-title">BEHIND THE SCENES : HOW CODING FUELS DRONES POWER</h3>
                                     <span class="arrow-btn"> Read More</span>
+                                    <p>{{ about.description }}</p>
                                   </div>
                                 </div>
                               </div>
-                        
+                        {% endfor %}
                               <div class="custom-card">
                                 <div class="card-image" style="background-image: url('{% static 'img/Drone2.jpg' %}');">
                                   <div class="card-content">
